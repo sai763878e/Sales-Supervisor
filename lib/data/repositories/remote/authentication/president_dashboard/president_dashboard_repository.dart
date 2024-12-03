@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:sales_supervisor/data/repositories/remote/api_client/api_service.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
 
@@ -20,24 +21,24 @@ class PresidentDashboardRepository {
     } catch (e) {}
   }
 
-  getDashboardData(
-      String userId,
-      String userTypeId,
-      String reportId,
-      String reportWindowId,
-      String filterOptionBase,
-      String filterOptionYear,
-      String filterOptionMonth,
-      String locationFilterUID,
-      DashboardComponentModel model) async {
+  Future<void> getDashboardData({
+      required String userId,
+      required String userTypeId,
+      required String reportId,
+      required String reportWindowId,
+      required String filterOptionBase,
+      required String filterOptionYear,
+      required String filterOptionMonth,
+      required String locationFilterUID,
+    required Rx<DashboardComponentModel> model}) async {
     String url =
         'GetData?UserTypeId=$userTypeId&UserId=$userId&ReportId=$reportId&ReportWindowId=$reportWindowId&FilterOptionsBase=$filterOptionBase&FilterOptionsYear=$filterOptionYear&FilterOptionsMonth=$filterOptionMonth&LocationFilterUID=$locationFilterUID';
     try {
       final response = await dio.get(url);
-      model.response = response.data;
+      model.value.response = response.data;
     } catch (e) {
     } finally {
-      model.isLoading = false;
+      // model.value.isLoading = false;
     }
   }
 }

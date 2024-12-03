@@ -94,52 +94,33 @@ class DashboardPieChartComponent extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          Text(
-                            title,
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          Stack(
-                            children: [
-                              CircularDonoughtPieChart(
-                                chartData: charData,
-                                isHorizontal: true,
-                                isVisible: false,
-                              ),
-                              Positioned(
-                                child: Center(
-                                  // heightFactor:
-                                  //     CSizes.dashboardComponent * 0.016,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                          AppLanguageUtils.instance.totalSales),
-                                      Text(
-                                        '10',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.black,
-                                                fontSize: 25),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Text(
+                        //   title,
+                        //   style: Theme.of(context).textTheme.titleMedium,
+                        // ),
+                        // Text(
+                        //   title,
+                        //   style: Theme.of(context).textTheme.labelMedium,
+                        // ),
+                        Container(
+                          height: 550,
+                          child: CircularDonoughtPieChart(
+                                                      chartData: charData,
+                                                      isHorizontal: true,
+                                                      isVisible: false,
+                                                    ),
+                        ),
+                        // Container(
+                        //   child: CircularDonoughtPieChart(
+                        //     chartData: charData,
+                        //     isHorizontal: true,
+                        //     isVisible: false,
+                        //   ),
+                        // ),
+                      ],
                     ),
                     Spacer(),
                     Container(

@@ -72,5 +72,5 @@ class CSizes {
   static const double gridViewSpacingSm = 8;
   static const double gridViewSpacingXsm = 4;
 
-  static const double dashboardComponent = 450;
+  static const double dashboardComponent = 600;
 }

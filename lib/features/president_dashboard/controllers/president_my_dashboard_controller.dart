@@ -17,10 +17,15 @@ class PresidentMyDashboardController extends GetxController {
   int filterOptionMonth = 0,
       filterOptionYear = 0;
 
+  int dashboardComponentInstances = 0;
+
+
+
   PresidentDashboardRepository presidentDashboardRepository =
       PresidentDashboardRepository.instance;
 
-  final dashComponentsList = <String, DashboardComponentModel>{};
+  final dashComponentsList = <DashboardReportIds, Rx<DashboardComponentModel>>{};
+
 
   @override
   void onInit() {
@@ -52,30 +57,30 @@ class PresidentMyDashboardController extends GetxController {
 
   prepareDashboardData() async {
     for (DashboardReportIds type in DashboardReportIds.values) {
-      DashboardComponentModel dashboardComponentModel =
-      DashboardComponentModel(type: type,);
+      Rx<DashboardComponentModel> dashboardComponentModel =
+      DashboardComponentModel(type: type,).obs;
 
-      dashboardComponentModel.reportId = type.name.split("_")[0];
-      dashboardComponentModel.reportWindowId = type.name.split("_")[1];
-      dashboardComponentModel.isLoading = true;
-      dashboardComponentModel.response = null;
+      dashboardComponentModel.value.reportId = type.name.split("_")[0];
+      dashboardComponentModel.value.reportWindowId = type.name.split("_")[1];
+      dashboardComponentModel.value.isLoading = true;
+      dashboardComponentModel.value.response = null;
 
-      dashComponentsList.assign(type.name, dashboardComponentModel);
+      dashComponentsList.assign(type, dashboardComponentModel);
     }
   }
 
-  Future<void> loadDashboard() async {
-    dashComponentsList.forEach((key, value) {
-      presidentDashboardRepository.getDashboardData(
-          userId,
-          userTypeId,
-          value.reportId,
-          value.reportWindowId,
-          filterOptionBase,
-          '$filterOptionYear',
-          '$filterOptionMonth',
-          locationFilterUID,
-          value);
-    });
-  }
+  // Future<void> loadDashboard() async {
+  //   dashComponentsList.forEach((key, value) {
+  //     presidentDashboardRepository.getDashboardData(
+  //         userId,
+  //         userTypeId,
+  //         value.reportId,
+  //         value.reportWindowId,
+  //         filterOptionBase,
+  //         '$filterOptionYear',
+  //         '$filterOptionMonth',
+  //         locationFilterUID,
+  //         value);
+  //   });
+  // }
 }

@@ -11,42 +11,43 @@ class CircularDonoughtPieChart extends StatelessWidget {
   bool isHorizontal;
   bool isVisible;
 
-
   @override
   Widget build(BuildContext context) {
     return SfCircularChart(
-      margin: const EdgeInsets.all(0),
-
+      margin: const EdgeInsets.all(10),
       series: [
         DoughnutSeries(
           animationDuration: 1000 * 1,
-          animationDelay: 0,
-          innerRadius: '60%',
+          animationDelay: 1000 * 0.5,
+          innerRadius: '65%',
           dataSource: chartData,
           yValueMapper: (data, _) => data[0],
           xValueMapper: (data, _) => data[1],
-          radius: '80%',
+          radius: '70%',
           explode: true,
           pointColorMapper: (data, _) => data[2],
-          dataLabelMapper: (data, _) => "${data[0]}",
-          dataLabelSettings: DataLabelSettings(
+          dataLabelMapper: (data, _) => "${data[1]} - ${data[0]}",
+          dataLabelSettings: const DataLabelSettings(
               isVisible: true,
-              labelPosition: ChartDataLabelPosition.outside
+              labelPosition: ChartDataLabelPosition.outside,
+            useSeriesColor: true,
+              connectorLineSettings: ConnectorLineSettings(
+                  type: ConnectorType.curve, length: '10%')
           ),
         ),
 
       ],
 
-      legend: Legend(
-          isVisible: isVisible,
-          position: LegendPosition.bottom,
-          orientation: isHorizontal
-              ? LegendItemOrientation.horizontal
-              : LegendItemOrientation.vertical,
-          textStyle: TextStyle(fontSize: 15),
-          iconHeight: 20,
-          iconWidth: 20
-      ),
+      // legend: Legend(
+      //     isVisible: isVisible,
+      //     position: LegendPosition.bottom,
+      //     orientation: isHorizontal
+      //         ? LegendItemOrientation.horizontal
+      //         : LegendItemOrientation.vertical,
+      //     textStyle: TextStyle(fontSize: 15),
+      //     iconHeight: 20,
+      //     iconWidth: 20
+      // ),
 
     );
   }

@@ -405,7 +405,7 @@ class User {
       _journeyEndTime = journeyEndTime;
 
   User.fromJson(Map<String, dynamic> json) {
-    _userId = json['User_Id'];
+    _User_Id = json['User_Id'];
     _userId = json['UserId'];
     _fullName = json['FullName'];
     _userName = json['User_Name'];
@@ -453,7 +453,7 @@ class User {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['User_Id'] = this._userId;
+    data['User_Id'] = this._User_Id;
     data['UserId'] = this._userId;
     data['FullName'] = this._fullName;
     data['User_Name'] = this._userName;
