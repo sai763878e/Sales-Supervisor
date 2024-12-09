@@ -25,10 +25,11 @@ class PresidentMyDashboardController extends GetxController {
       PresidentDashboardRepository.instance;
 
   final dashComponentsList = <DashboardReportIds, Rx<DashboardComponentModel>>{};
+  final isPageLoading = true.obs;
 
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
     initializeDashboard();
   }
@@ -65,8 +66,12 @@ class PresidentMyDashboardController extends GetxController {
       dashboardComponentModel.value.isLoading = true;
       dashboardComponentModel.value.response = null;
 
-      dashComponentsList.assign(type, dashboardComponentModel);
+      // dashComponentsList.assign(type, dashboardComponentModel);
+      dashComponentsList.addIf(true,type, dashboardComponentModel);
     }
+
+    isPageLoading.value = false;
+    isPageLoading.refresh();
   }
 
   // Future<void> loadDashboard() async {

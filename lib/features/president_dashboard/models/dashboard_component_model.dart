@@ -8,7 +8,11 @@ class DashboardComponentModel {
   DashboardReportIds type;
   String reportId;
   String reportWindowId;
-  List charData = [];
+  Map<String,List> chartData = {};
+  static const String valueAll = "ValueAll";
+  static const String valueHighEnd = "ValueHighEnd";
+  static const String volumeAll = "VolumeAll";
+  static const String volumeHighEnd = "VolumeHighEnd";
   // List charData = [
   //   [10, 'Protein', Colors.purple],
   //   [50, 'Carbs', Colors.yellow],

@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_pie_chart_controller.dart';
+import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_single_barchart_controller.dart';
+import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_single_barchart_multiselect_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/president_my_dashboard_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_pie_chart_model.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/column_charts.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/circular_donought_pie_chart.dart';
 import 'package:sales_supervisor/utils/constants/sizes.dart';
 import 'package:sales_supervisor/utils/language/app_language_utils.dart';
@@ -16,8 +19,8 @@ import 'package:shimmer/shimmer.dart';
 import '../../../../../utils/constants/colors.dart';
 import '../../../../../utils/helpers/helper_functions.dart';
 
-class DashboardPieChartComponent extends StatelessWidget {
-  DashboardPieChartComponent({
+class DashboardSingleBarchartMultiselectComponent extends StatelessWidget {
+  DashboardSingleBarchartMultiselectComponent({
     super.key,
     required this.presidentMyDashboardController,
     required this.componentModel,
@@ -40,7 +43,7 @@ class DashboardPieChartComponent extends StatelessWidget {
     final isDark = CHelperFunction.isDarkMode(context);
 
     final controller = Get.put(
-        DashboardPieChartController(
+        DashboardSingleBarchartMultiselectController(
             presidentMyDashboardController, componentModel),
         tag: componentModel.value.reportWindowId);
     // controller ??= DashboardPieChartController();
@@ -105,37 +108,87 @@ class DashboardPieChartComponent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(CSizes.defaultSpace/2),
+                        padding: EdgeInsets.all(CSizes.defaultSpace / 2),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              controller.dashboardPieChartModelMap[
-                                          controller.selectedView.value] !=
-                                      null
-                                  ? controller
-                                      .dashboardPieChartModelMap[
-                                          controller.selectedView.value]!
-                                      .title
-                                  : "",
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            Text(
-                              controller.dashboardPieChartModelMap[
-                                          controller.selectedView.value] !=
-                                      null
-                                  ? controller
-                                      .dashboardPieChartModelMap[
-                                          controller.selectedView.value]!
-                                      .subTitle
-                                  : "",
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
-                        
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  /*left: CSizes.defaultSpace/2,*/
+                                  right: CSizes.defaultSpace),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        controller.dashboardChartModelMap[
+                                                    controller
+                                                        .selectedView.value] !=
+                                                null
+                                            ? controller
+                                                .dashboardChartModelMap[
+                                                    controller
+                                                        .selectedView.value]!
+                                                .title
+                                            : "",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
+                                      ),
+                                      Text(
+                                        controller.dashboardChartModelMap[
+                                                    controller
+                                                        .selectedView.value] !=
+                                                null
+                                            ? controller
+                                                .dashboardChartModelMap[
+                                                    controller
+                                                        .selectedView.value]!
+                                                .subTitle
+                                            : "",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium,
+                                      ),
+                                    ],
+                                  ),
+                                  Obx(
+                                    () => DropdownMenu<String>(
+                                      enableSearch: true,
+                                      initialSelection:
+                                          controller.selectedSubView.value,
+                                      // menuStyle: MenuStyle(),
+
+                                      dropdownMenuEntries: controller
+                                          .selectedSubViewList
+                                          .map((value) => DropdownMenuEntry(
+                                              value: value, label: (value)))
+                                          .toList(),
+                                      onSelected: (String? value) => controller
+                                          .changeSelectedSubViews(value),
+                                      // value: controller.selectedSubView.value,
+                                      // items: controller.selectedSubViewList
+                                      //     .map((value) => DropdownMenuItem(
+                                      //         value: value,
+                                      //         child: Text(value)))
+                                      //     .toList(),
+                                      // onChanged: (dynamic? value) =>
+                                      //     controller
+                                      //         .changeSelectedSubViews(value),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+
                             // Container(
                             //   child: CircularDonoughtPieChart(
-                            //     chartData: controller.dashboardPieChartModelMap[controller.selectedView.value] !=
-                            //         null ? controller.dashboardPieChartModelMap[controller.selectedView.value]!
+                            //     chartData: controller.dashboardChartModelMap[controller.selectedView.value] !=
+                            //         null ? controller.dashboardChartModelMap[controller.selectedView.value]!
                             //         .chartData : [],
                             //     isHorizontal: true,
                             //     isVisible: false,
@@ -147,17 +200,15 @@ class DashboardPieChartComponent extends StatelessWidget {
 
                       Flexible(
                         flex: 1,
-                        child: CircularDonoughtPieChart(
-                          chartData: controller.dashboardPieChartModelMap[
+                        child: ColumnCharts(
+                          chartData: controller.dashboardChartModelMap[
                                       controller.selectedView.value] !=
                                   null
                               ? controller
-                                  .dashboardPieChartModelMap[
+                                  .dashboardChartModelMap[
                                       controller.selectedView.value]!
-                                  .chartData
+                                  .chartData[controller.selectedSubView.value]
                               : [],
-                          isHorizontal: true,
-                          isVisible: false,
                         ),
                       ),
                       // Spacer(),
@@ -193,7 +244,8 @@ class DashboardPieChartComponent extends StatelessWidget {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: ()=>controller.changeValueVolumeViews(),
+                                onTap: () =>
+                                    controller.changeValueVolumeViews(),
                                 child: Text(
                                   controller.viewValue.value
                                       ? AppLanguageUtils.instance.switchToVolume

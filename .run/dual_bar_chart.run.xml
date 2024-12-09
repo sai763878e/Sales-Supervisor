@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="dual_bar_chart" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="filePath" value="$PROJECT_DIR$/lib/features/president_dashboard/screens/widgets/charts/dual_bar_chart.dart" />
+    <method v="2" />
+  </configuration>
+</component>

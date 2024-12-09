@@ -4,11 +4,19 @@ import 'package:get/get_rx/get_rx.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sales_supervisor/common/widgets/list_tiles/setting_menu_tile.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_component_controller.dart';
+import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_pie_chart_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/president_my_dashboard_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_report_ids.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/dual_bar_chart.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_pie_chart_component.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_single_barchart_component.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_single_barchart_multiselect_component.dart';
+import 'package:sales_supervisor/utils/constants/sizes.dart';
 import 'package:sales_supervisor/utils/language/app_language_utils.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../../../utils/helpers/helper_functions.dart';
 
 class PresidentMyDashboard extends StatelessWidget {
   PresidentMyDashboard({super.key});
@@ -23,6 +31,9 @@ class PresidentMyDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(PresidentMyDashboardController());
+    // Get.create<DashboardPieChartController>(() => DashboardPieChartController());
+    final isDark = CHelperFunction.isDarkMode(context);
+
     // return ListView(
     //   scrollDirection: Axis.vertical,
     //   shrinkWrap: true,
@@ -60,54 +71,77 @@ class PresidentMyDashboard extends StatelessWidget {
     //     ),
     //   ],
     // );
-    return SingleChildScrollView(
-        child: Column(mainAxisSize: MainAxisSize.max, children: [
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10, bottom: 10),
-          child: Row(
-            children: [
-              DashboardComponent(controller,
-                  controller.dashComponentsList[DashboardReportIds.SSP_LSSP]!),
-              DashboardComponent(controller,
-                  controller.dashComponentsList[DashboardReportIds.SSP_LSSP]!),
-              DashboardComponent(controller,
-                  controller.dashComponentsList[DashboardReportIds.SSP_LSSP]!),
-            ],
-          ),
-        ),
-      ),
-      // DashboardComponent(controller,
-      //     controller.dashComponentsList[DashboardReportIds.PHOD_LPHOD]!),
-      // DashboardComponent(controller,
-      //     controller.dashComponentsList[DashboardReportIds.PHOD_LPHOD]!),
-      // DashboardComponent(controller,
-      //     controller.dashComponentsList[DashboardReportIds.PHOD_LPHOD]!),
-      // DashboardComponent(controller,
-      //     controller.dashComponentsList[DashboardReportIds.PHOD_LPHOD]!),
-    ]));
+    return controller.isPageLoading.value
+        ? Shimmer.fromColors(
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDark ? Colors.black : Colors.white,
+                borderRadius: BorderRadius.circular(15),
+
+                // boxShadow: [
+                //   BoxShadow(
+                //       color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+                //       // offset: Offset(3, 3),
+                //       blurRadius: 10,
+                //       spreadRadius: 1),
+                //   BoxShadow(
+                //       color: isDark
+                //           ? Colors.grey.shade900
+                //           : Colors.white.withOpacity(0.5),
+                //       // offset: Offset(-2, -2),
+                //       blurRadius: 10,
+                //       spreadRadius: 1)
+                // ],
+              ),
+            ),
+            baseColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
+            highlightColor:
+                isDark ? Colors.grey.shade500 : Colors.white.withOpacity(1),
+          )
+        : SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.max, children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.only(left: CSizes.defaultSpace/2, bottom: CSizes.defaultSpace/2),
+                child: Row(
+                  children: [
+                    DashboardPieChartComponent(presidentMyDashboardController: controller,
+                        componentModel: controller.dashComponentsList[DashboardReportIds.SSP_LSSP]!),
+                    DashboardSingleBarchartComponent(presidentMyDashboardController: controller,
+                        componentModel: controller.dashComponentsList[DashboardReportIds.SSP_CSSP]!),
+                    DashboardSingleBarchartMultiselectComponent(presidentMyDashboardController: controller,
+                        componentModel: controller.dashComponentsList[DashboardReportIds.SSP_SSSP]!),
+                  ],
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.only(left: CSizes.defaultSpace/2, bottom: CSizes.defaultSpace/2),
+                child: Row(
+                  children: [
+                    DashboardSingleBarchartComponent(presidentMyDashboardController: controller,
+                        componentModel: controller.dashComponentsList[DashboardReportIds.SSTA_CSSTA]!),
+                    DashboardSingleBarchartMultiselectComponent(presidentMyDashboardController: controller,
+                        componentModel: controller.dashComponentsList[DashboardReportIds.SSTA_SSSTA]!),
+
+                    // DualBarChart(),
+
+                  ],
+                ),
+              ),
+
+            )
+            // DashboardComponent(controller,
+            //     controller.dashComponentsList[DashboardReportIds.SSTA_LSSTA]!),
+            // DashboardComponent(controller,
+            //     controller.dashComponentsList[DashboardReportIds.SSTA_CSSTA]!),
+            // DashboardComponent(controller,
+            //     controller.dashComponentsList[DashboardReportIds.SSTA_SSSTA]!),
+          ]));
   }
 }
 
-class DashboardComponent extends StatelessWidget {
-  PresidentMyDashboardController presidentMyDashboardController;
-  Rx<DashboardComponentModel> model;
 
-  DashboardComponent(this.presidentMyDashboardController, this.model,
-      {super.key});
-
-  Widget getWidget(DashboardComponentController controller) {
-    return Obx(() => DashboardPieChartComponent(
-        isLoading: controller.model.value.isLoading,
-        charData: controller.model.value.charData));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    DashboardComponentController controller = Get.put(
-        DashboardComponentController(presidentMyDashboardController, model),
-    tag: '${++presidentMyDashboardController.dashboardComponentInstances}');
-    return getWidget(controller);
-  }
-}

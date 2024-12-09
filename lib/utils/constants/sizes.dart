@@ -73,4 +73,6 @@ class CSizes {
   static const double gridViewSpacingXsm = 4;
 
   static const double dashboardComponent = 600;
+  static const double singleBarChartRadius = 16.0;
+  static const double dualBarChartRadius = 16.0;
 }

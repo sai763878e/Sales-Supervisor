@@ -8,20 +8,32 @@ import 'package:get/get_state_manager/src/simple/list_notifier.dart';
 import 'package:sales_supervisor/data/repositories/remote/authentication/president_dashboard/president_dashboard_repository.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/president_my_dashboard_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
+import 'package:sales_supervisor/features/president_dashboard/models/dashboard_pie_chart_model.dart';
 
-class DashboardComponentController extends GetxController {
-  PresidentMyDashboardController presidentMyDashboardController;
-  Rx<DashboardComponentModel> model;
+import '../models/chart_data_model.dart';
+import '../models/dashboard_single_barchart_model.dart';
 
-  DashboardComponentController(
+class DashboardSingleBarchartController extends GetxController {
+  DashboardSingleBarchartController(
     this.presidentMyDashboardController,
     this.model,
   );
 
+  PresidentMyDashboardController presidentMyDashboardController;
+  Rx<DashboardComponentModel> model;
   PresidentDashboardRepository presidentDashboardRepository =
       PresidentDashboardRepository.instance;
   final Random random = Random();
   int? id;
+
+  final dashboardPieChartModelMap =
+      <String, DashboardSingleBarchartModel>{}.obs;
+  final selectedView = "".obs;
+
+  final viewAll = true.obs;
+  final viewHiEnd = false.obs;
+  final viewValue = true.obs;
+  final viewVolume = false.obs;
 
   @override
   void onInit() {
@@ -55,7 +67,6 @@ class DashboardComponentController extends GetxController {
             locationFilterUID: presidentMyDashboardController.locationFilterUID,
             model: model)
         .then((value) {
-
       parseSSPLSSPDashboard(model);
     });
   }
@@ -68,27 +79,30 @@ class DashboardComponentController extends GetxController {
       var centerViews = result["CenterViews"];
       var views = result["Views"] as Map<String, dynamic>;
 
-      model.value.chartData = {};
-
       views.forEach((key, value) {
+        DashboardSingleBarchartModel dashboardSingleBarchartModel =
+            DashboardSingleBarchartModel();
+
+        dashboardSingleBarchartModel.title = value["Title"];
+        dashboardSingleBarchartModel.subTitle = value["Subtitle"];
+        dashboardSingleBarchartModel.key = key;
+
         var header = value["Header"];
         var defaultData = value["Data"]["default"];
 
-        var chartData = [];
+        var chartData = <ChartData>[];
         for (var data in defaultData) {
-          chartData.add([
-            data[header["Column2"]], //value
-            data[header["Column1"]], //label
-            getRandomColor(),
-          ]);
+          chartData.add(ChartData(data[header["Column1"]],
+              data[header["Column2"]] /*,Colors.indigo*/));
         }
 
-        model.value.chartData.addIf(true,key,chartData);
+        dashboardSingleBarchartModel.chartData = chartData;
+
+        dashboardPieChartModelMap.value
+            .addIf(true, key, dashboardSingleBarchartModel);
       });
 
-      if(model.value.chartData.isNotEmpty){
-        model.value.chartData[""];
-      }
+      changeView();
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -96,11 +110,45 @@ class DashboardComponentController extends GetxController {
     }
 
     model.value.isLoading = false;
-
     model.refresh();
     if (kDebugMode) {
       print('load data of $id end at ${DateTime.now()}');
     }
+  }
+
+  changeView() {
+    if (viewValue.value && viewAll.value) {
+      selectedView.value = "ValueAll";
+    } else if (viewValue.value && viewHiEnd.value) {
+      selectedView.value = "ValueHighEnd";
+    } else if (viewVolume.value && viewAll.value) {
+      selectedView.value = "VolumeAll";
+    } else if (viewVolume.value && viewHiEnd.value) {
+      selectedView.value = "VolumeHighEnd";
+    }
+    selectedView.refresh();
+  }
+
+  changeAllHighEndViews() {
+    if (viewAll.value) {
+      viewAll.value = false;
+      viewHiEnd.value = true;
+    } else if (viewHiEnd.value) {
+      viewHiEnd.value = false;
+      viewAll.value = true;
+    }
+    changeView();
+  }
+
+  changeValueVolumeViews() {
+    if (viewValue.value) {
+      viewValue.value = false;
+      viewVolume.value = true;
+    } else if (viewVolume.value) {
+      viewVolume.value = false;
+      viewValue.value = true;
+    }
+    changeView();
   }
 
   int colourIndex = 256;

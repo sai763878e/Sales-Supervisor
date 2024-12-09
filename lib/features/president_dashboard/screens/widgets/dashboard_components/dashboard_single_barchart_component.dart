@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_pie_chart_controller.dart';
+import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_single_barchart_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/president_my_dashboard_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_pie_chart_model.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/column_charts.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/circular_donought_pie_chart.dart';
 import 'package:sales_supervisor/utils/constants/sizes.dart';
 import 'package:sales_supervisor/utils/language/app_language_utils.dart';
@@ -16,8 +18,8 @@ import 'package:shimmer/shimmer.dart';
 import '../../../../../utils/constants/colors.dart';
 import '../../../../../utils/helpers/helper_functions.dart';
 
-class DashboardPieChartComponent extends StatelessWidget {
-  DashboardPieChartComponent({
+class DashboardSingleBarchartComponent extends StatelessWidget {
+  DashboardSingleBarchartComponent({
     super.key,
     required this.presidentMyDashboardController,
     required this.componentModel,
@@ -40,7 +42,7 @@ class DashboardPieChartComponent extends StatelessWidget {
     final isDark = CHelperFunction.isDarkMode(context);
 
     final controller = Get.put(
-        DashboardPieChartController(
+        DashboardSingleBarchartController(
             presidentMyDashboardController, componentModel),
         tag: componentModel.value.reportWindowId);
     // controller ??= DashboardPieChartController();
@@ -105,7 +107,7 @@ class DashboardPieChartComponent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(CSizes.defaultSpace/2),
+                        padding: EdgeInsets.all(CSizes.defaultSpace / 2),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -131,7 +133,7 @@ class DashboardPieChartComponent extends StatelessWidget {
                                   : "",
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
-                        
+
                             // Container(
                             //   child: CircularDonoughtPieChart(
                             //     chartData: controller.dashboardPieChartModelMap[controller.selectedView.value] !=
@@ -147,7 +149,7 @@ class DashboardPieChartComponent extends StatelessWidget {
 
                       Flexible(
                         flex: 1,
-                        child: CircularDonoughtPieChart(
+                        child: ColumnCharts(
                           chartData: controller.dashboardPieChartModelMap[
                                       controller.selectedView.value] !=
                                   null
@@ -156,8 +158,6 @@ class DashboardPieChartComponent extends StatelessWidget {
                                       controller.selectedView.value]!
                                   .chartData
                               : [],
-                          isHorizontal: true,
-                          isVisible: false,
                         ),
                       ),
                       // Spacer(),
@@ -193,7 +193,8 @@ class DashboardPieChartComponent extends StatelessWidget {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: ()=>controller.changeValueVolumeViews(),
+                                onTap: () =>
+                                    controller.changeValueVolumeViews(),
                                 child: Text(
                                   controller.viewValue.value
                                       ? AppLanguageUtils.instance.switchToVolume

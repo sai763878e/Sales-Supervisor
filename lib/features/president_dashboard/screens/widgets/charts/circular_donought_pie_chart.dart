@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-
 class CircularDonoughtPieChart extends StatelessWidget {
-
   CircularDonoughtPieChart(
-      {super.key, required this.chartData, this.isHorizontal = false,this.isVisible = true});
+      {super.key,
+      required this.chartData,
+      this.isHorizontal = false,
+      this.isVisible = true});
 
   final List chartData;
   bool isHorizontal;
@@ -19,23 +20,21 @@ class CircularDonoughtPieChart extends StatelessWidget {
         DoughnutSeries(
           animationDuration: 1000 * 1,
           animationDelay: 1000 * 0.5,
-          innerRadius: '65%',
+          innerRadius: '55%',
           dataSource: chartData,
           yValueMapper: (data, _) => data[0],
           xValueMapper: (data, _) => data[1],
-          radius: '70%',
+          radius: '75%',
           explode: true,
           pointColorMapper: (data, _) => data[2],
           dataLabelMapper: (data, _) => "${data[1]} - ${data[0]}",
           dataLabelSettings: const DataLabelSettings(
               isVisible: true,
               labelPosition: ChartDataLabelPosition.outside,
-            useSeriesColor: true,
+              useSeriesColor: true,
               connectorLineSettings: ConnectorLineSettings(
-                  type: ConnectorType.curve, length: '10%')
-          ),
+                  type: ConnectorType.curve, length: '10%')),
         ),
-
       ],
 
       // legend: Legend(
@@ -48,7 +47,6 @@ class CircularDonoughtPieChart extends StatelessWidget {
       //     iconHeight: 20,
       //     iconWidth: 20
       // ),
-
     );
   }
 }
