@@ -21,11 +21,11 @@ class AuthenticationRepository extends GetxController {
 
   screenRedirect() async {
     //Local Storage
+    deviceStorage.writeIfNull("IsFirstTime", true);
     if (kDebugMode) {
       print('============GET STORAGE ============');
       print(deviceStorage.read("IsFirstTime"));
     }
-    deviceStorage.writeIfNull("IsFirstTime", true);
     deviceStorage.read("IsFirstTime") != true
         ? Get.offAll(() => deviceStorage.read(PreferenceConstants.userMaster) == null ? LoginScreen() : NavigationMenu())
         : Get.offAll(() =>  OnBoardingScreen());

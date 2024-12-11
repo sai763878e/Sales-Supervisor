@@ -16,9 +16,12 @@ class UserPref {
         .saveData(PreferenceConstants.userMaster, json.encode(user.toJson()));
   }
 
-  User? getUserData(){
-    return User.fromJson(json.decode(CLocalStorage().readData(PreferenceConstants.userMaster)));
+  User? getUserData() {
+    try {
+      return User.fromJson(json
+          .decode(CLocalStorage().readData(PreferenceConstants.userMaster)));
+    } catch (e) {
+      rethrow;
+    }
   }
-
-
 }

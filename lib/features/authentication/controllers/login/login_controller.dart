@@ -65,7 +65,7 @@ class LoginController extends GetxController {
       }
 
       //login user using
-      final response = loginRepository.login(userName.text.trim(), password.text.trim(), "asdsd", "");
+      final response = await loginRepository.login(userName.text.trim(), password.text.trim(), "asdsd", "");
 
       //remove loader
       CFullScreenLoader.stopLoading();

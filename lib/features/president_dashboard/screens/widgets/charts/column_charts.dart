@@ -20,9 +20,15 @@ class ColumnCharts extends StatelessWidget {
       child: Container(
         color: Colors.white,
         child: SfCartesianChart(
-          enableSideBySideSeriesPlacement: true,
-
-            primaryXAxis: CategoryAxis(),
+            enableAxisAnimation: true,
+            zoomPanBehavior: ZoomPanBehavior(
+              enablePanning: true,
+            ),
+            primaryXAxis: CategoryAxis(
+              initialVisibleMaximum: 4.0,
+              initialVisibleMinimum: 0.0,
+            ),
+            tooltipBehavior: TooltipBehavior(enable: true),
             series: <CartesianSeries>[
               ColumnSeries<ChartData, String>(
                 // width: 0.8, // Sets the width of the bars (30% of available space)
@@ -32,12 +38,23 @@ class ColumnCharts extends StatelessWidget {
                 yValueMapper: (data, _) => data.y,
                 dataLabelMapper: (data, _) => '${data.y}',
                 dataLabelSettings: const DataLabelSettings(
-                    isVisible: true,
-                    labelPosition: ChartDataLabelPosition.inside,
-                    labelAlignment: ChartDataLabelAlignment.top,
-                    useSeriesColor: true,
-                    angle: 0,
-                    /*overflowMode: OverflowMode.shift*/),
+                  isVisible: true,
+                  labelPosition: ChartDataLabelPosition.outside,
+                  labelAlignment: ChartDataLabelAlignment.outer,
+                  useSeriesColor: true,
+                  angle: 0, /*overflowMode: OverflowMode.shift*/
+                ),
+                width: chartData != null
+                    ? chartData!.length > 5
+                        ? 1
+                        : 0.3
+                    : 1,
+                // Set fixed width for the columns (e.g., 10% of the total width)
+                spacing: chartData != null
+                    ? chartData!.length > 5
+                        ? 0.2
+                        : 0.0
+                    : 1,
 
                 sortingOrder: SortingOrder.descending,
                 // Sorting based on the specified field
@@ -73,7 +90,6 @@ class ColumnCharts extends StatelessWidget {
               //
               //   // width: 0.8,
               // ),
-
             ]),
       ),
     );

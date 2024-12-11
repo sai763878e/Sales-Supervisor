@@ -9,6 +9,8 @@ import 'package:sales_supervisor/features/president_dashboard/controllers/presid
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_report_ids.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/dual_bar_chart.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_dual_barchart_component.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_dual_barchart_multiselect_component.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_pie_chart_component.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_single_barchart_component.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_single_barchart_multiselect_component.dart';
@@ -112,6 +114,7 @@ class PresidentMyDashboard extends StatelessWidget {
                         componentModel: controller.dashComponentsList[DashboardReportIds.SSP_CSSP]!),
                     DashboardSingleBarchartMultiselectComponent(presidentMyDashboardController: controller,
                         componentModel: controller.dashComponentsList[DashboardReportIds.SSP_SSSP]!),
+
                   ],
                 ),
               ),
@@ -122,9 +125,9 @@ class PresidentMyDashboard extends StatelessWidget {
                 padding: const EdgeInsets.only(left: CSizes.defaultSpace/2, bottom: CSizes.defaultSpace/2),
                 child: Row(
                   children: [
-                    DashboardSingleBarchartComponent(presidentMyDashboardController: controller,
+                    DashboardDualBarchartComponent(presidentMyDashboardController: controller,
                         componentModel: controller.dashComponentsList[DashboardReportIds.SSTA_CSSTA]!),
-                    DashboardSingleBarchartMultiselectComponent(presidentMyDashboardController: controller,
+                    DashboardDualBarchartMultiselectComponent(presidentMyDashboardController: controller,
                         componentModel: controller.dashComponentsList[DashboardReportIds.SSTA_SSSTA]!),
 
                     // DualBarChart(),

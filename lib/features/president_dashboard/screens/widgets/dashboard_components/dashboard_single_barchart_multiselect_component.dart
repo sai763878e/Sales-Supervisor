@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -104,6 +102,7 @@ class DashboardSingleBarchartMultiselectComponent extends StatelessWidget {
                   ],
                 ),
                 child: Container(
+                  width: double.infinity,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -112,15 +111,11 @@ class DashboardSingleBarchartMultiselectComponent extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  /*left: CSizes.defaultSpace/2,*/
-                                  right: CSizes.defaultSpace),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -156,33 +151,34 @@ class DashboardSingleBarchartMultiselectComponent extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  Obx(
-                                    () => DropdownMenu<String>(
-                                      enableSearch: true,
-                                      initialSelection:
-                                          controller.selectedSubView.value,
-                                      // menuStyle: MenuStyle(),
+                                ),
+                                Obx(
+                                  () => DropdownMenu<String>(
+                                    width: 100,
+                                    enableSearch: true,
+                                    initialSelection:
+                                        controller.selectedSubView.value,
+                                    // menuStyle: MenuStyle(),
 
-                                      dropdownMenuEntries: controller
-                                          .selectedSubViewList
-                                          .map((value) => DropdownMenuEntry(
-                                              value: value, label: (value)))
-                                          .toList(),
-                                      onSelected: (String? value) => controller
-                                          .changeSelectedSubViews(value),
-                                      // value: controller.selectedSubView.value,
-                                      // items: controller.selectedSubViewList
-                                      //     .map((value) => DropdownMenuItem(
-                                      //         value: value,
-                                      //         child: Text(value)))
-                                      //     .toList(),
-                                      // onChanged: (dynamic? value) =>
-                                      //     controller
-                                      //         .changeSelectedSubViews(value),
-                                    ),
-                                  )
-                                ],
-                              ),
+                                    dropdownMenuEntries: controller
+                                        .selectedSubViewList
+                                        .map((value) => DropdownMenuEntry(
+                                            value: value, label: (value)))
+                                        .toList(),
+                                    onSelected: (String? value) => controller
+                                        .changeSelectedSubViews(value),
+                                    // value: controller.selectedSubView.value,
+                                    // items: controller.selectedSubViewList
+                                    //     .map((value) => DropdownMenuItem(
+                                    //         value: value,
+                                    //         child: Text(value)))
+                                    //     .toList(),
+                                    // onChanged: (dynamic? value) =>
+                                    //     controller
+                                    //         .changeSelectedSubViews(value),
+                                  ),
+                                )
+                              ],
                             )
 
                             // Container(
