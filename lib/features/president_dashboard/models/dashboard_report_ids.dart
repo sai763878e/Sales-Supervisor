@@ -6,4 +6,8 @@ enum DashboardReportIds {
   SSTA_LSSTA,
   SSTA_CSSTA,
   SSTA_SSSTA,
+  SPP_LSPP,
+  SITO_LSITO,
+  CDSP_CCDSP,
+
 }

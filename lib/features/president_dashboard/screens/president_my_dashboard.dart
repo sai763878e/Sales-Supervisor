@@ -9,6 +9,7 @@ import 'package:sales_supervisor/features/president_dashboard/controllers/presid
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_report_ids.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/dual_bar_chart.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_component.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_dual_barchart_component.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_dual_barchart_multiselect_component.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_pie_chart_component.dart';
@@ -102,49 +103,89 @@ class PresidentMyDashboard extends StatelessWidget {
           )
         : SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.max, children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.only(left: CSizes.defaultSpace/2, bottom: CSizes.defaultSpace/2),
-                child: Row(
-                  children: [
-                    DashboardPieChartComponent(presidentMyDashboardController: controller,
-                        componentModel: controller.dashComponentsList[DashboardReportIds.SSP_LSSP]!),
-                    DashboardSingleBarchartComponent(presidentMyDashboardController: controller,
-                        componentModel: controller.dashComponentsList[DashboardReportIds.SSP_CSSP]!),
-                    DashboardSingleBarchartMultiselectComponent(presidentMyDashboardController: controller,
-                        componentModel: controller.dashComponentsList[DashboardReportIds.SSP_SSSP]!),
-
-                  ],
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Padding(
+            //     padding: const EdgeInsets.only(
+            //         left: CSizes.defaultSpace / 2,
+            //         bottom: CSizes.defaultSpace / 2),
+            //     child: Row(
+            //       children: [
+            //         DashboardComponent(
+            //             presidentMyDashboardController: controller,
+            //             componentModel: controller
+            //                 .dashComponentsList[DashboardReportIds.SSP_LSSP]!),
+            //         DashboardComponent(
+            //             presidentMyDashboardController: controller,
+            //             componentModel: controller
+            //                 .dashComponentsList[DashboardReportIds.SSP_CSSP]!),
+            //         DashboardComponent(
+            //             presidentMyDashboardController: controller,
+            //             componentModel: controller
+            //                 .dashComponentsList[DashboardReportIds.SSP_SSSP]!),
+            //
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Padding(
+            //     padding: const EdgeInsets.only(
+            //         left: CSizes.defaultSpace / 2,
+            //         bottom: CSizes.defaultSpace / 2),
+            //     child: Row(
+            //       children: [
+            //         //TODO Target vs Achicevement Chart Need to implement here
+            //
+            //         DashboardComponent(
+            //             presidentMyDashboardController: controller,
+            //             componentModel: controller
+            //                 .dashComponentsList[DashboardReportIds.SSTA_CSSTA]!),
+            //         DashboardComponent(
+            //             presidentMyDashboardController: controller,
+            //             componentModel: controller
+            //                 .dashComponentsList[DashboardReportIds.SSTA_SSSTA]!),
+            //
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Padding(
+            //     padding: const EdgeInsets.only(
+            //         left: CSizes.defaultSpace / 2,
+            //         bottom: CSizes.defaultSpace / 2),
+            //     child: Row(
+            //       children: [
+            //         DashboardComponent(
+            //             presidentMyDashboardController: controller,
+            //             componentModel: controller
+            //                 .dashComponentsList[DashboardReportIds.SPP_LSPP]!),
+            //         // DualBarChart(),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: CSizes.defaultSpace / 2,
+                      bottom: CSizes.defaultSpace / 2),
+                  child: Row(
+                    children: [
+                      DashboardComponent(
+                          presidentMyDashboardController: controller,
+                          componentModel: controller
+                              .dashComponentsList[DashboardReportIds.CDSP_CCDSP]!),
+                      // DualBarChart(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.only(left: CSizes.defaultSpace/2, bottom: CSizes.defaultSpace/2),
-                child: Row(
-                  children: [
-                    DashboardDualBarchartComponent(presidentMyDashboardController: controller,
-                        componentModel: controller.dashComponentsList[DashboardReportIds.SSTA_CSSTA]!),
-                    DashboardDualBarchartMultiselectComponent(presidentMyDashboardController: controller,
-                        componentModel: controller.dashComponentsList[DashboardReportIds.SSTA_SSSTA]!),
 
-                    // DualBarChart(),
-
-                  ],
-                ),
-              ),
-
-            )
-            // DashboardComponent(controller,
-            //     controller.dashComponentsList[DashboardReportIds.SSTA_LSSTA]!),
-            // DashboardComponent(controller,
-            //     controller.dashComponentsList[DashboardReportIds.SSTA_CSSTA]!),
-            // DashboardComponent(controller,
-            //     controller.dashComponentsList[DashboardReportIds.SSTA_SSSTA]!),
           ]));
   }
 }
-
-

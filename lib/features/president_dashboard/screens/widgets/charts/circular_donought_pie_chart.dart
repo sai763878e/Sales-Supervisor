@@ -38,12 +38,13 @@ class CircularDonoughtPieChart extends StatelessWidget {
               animationDelay: 1000 * 0.5,
               innerRadius: '55%',
               dataSource: chartData,
-              yValueMapper: (data, _) => data[0],
-              xValueMapper: (data, _) => data[1],
+              xValueMapper: (data, _) => data[0],
+              yValueMapper: (data, _) => data[1],
+
               radius: '55%',
               explode: true,
               pointColorMapper: (data, _) => data[2],
-              dataLabelMapper: (data, _) => "${data[1]} - ${data[0]}",
+              dataLabelMapper: (data, _) => "${data[0]} - ${data[1]}",
               dataLabelSettings: const DataLabelSettings(
                   // labelAlignment: ChartDataLabelAlignment.bottom,
                   // labelIntersectAction: LabelIntersectAction.shift,
