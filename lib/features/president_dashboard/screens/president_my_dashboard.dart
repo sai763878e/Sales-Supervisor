@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:sales_supervisor/common/widgets/choice_chip/choice_chip.dart';
 import 'package:sales_supervisor/common/widgets/list_tiles/setting_menu_tile.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_component_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_pie_chart_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/president_my_dashboard_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_report_ids.dart';
+import 'package:sales_supervisor/features/president_dashboard/models/location_filter_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/dual_bar_chart.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_component.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_dual_barchart_component.dart';
@@ -76,33 +78,63 @@ class PresidentMyDashboard extends StatelessWidget {
     // );
     return controller.isPageLoading.value
         ? Shimmer.fromColors(
+            baseColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
+            highlightColor:
+                isDark ? Colors.grey.shade500 : Colors.white.withOpacity(1),
             child: Container(
               decoration: BoxDecoration(
                 color: isDark ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.circular(15),
-
-                // boxShadow: [
-                //   BoxShadow(
-                //       color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
-                //       // offset: Offset(3, 3),
-                //       blurRadius: 10,
-                //       spreadRadius: 1),
-                //   BoxShadow(
-                //       color: isDark
-                //           ? Colors.grey.shade900
-                //           : Colors.white.withOpacity(0.5),
-                //       // offset: Offset(-2, -2),
-                //       blurRadius: 10,
-                //       spreadRadius: 1)
-                // ],
               ),
             ),
-            baseColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
-            highlightColor:
-                isDark ? Colors.grey.shade500 : Colors.white.withOpacity(1),
           )
         : SingleChildScrollView(
-            child: Column(mainAxisSize: MainAxisSize.max, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            ///Location Filters
+            Obx(
+              () => SizedBox(
+                height: 50,
+                child: controller.isLocationFilterLoading.value
+                    ? Shimmer.fromColors(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.black : Colors.white,
+                          ),
+                        ),
+                        baseColor: isDark
+                            ? Colors.grey.shade600
+                            : Colors.grey.shade100,
+                        highlightColor: isDark
+                            ? Colors.grey.shade500
+                            : Colors.white.withOpacity(1),
+                      )
+                    : Obx(
+                        () => ListView.builder(
+                            itemCount:
+                                controller.locationTypesList.value.length,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (_, index) {
+                              return Padding(
+                                padding: EdgeInsets.all(10),
+                                child: ChoiceChip(
+                                  label: Text(
+                                    controller.locationTypesList.value[index],
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(fontSize: 14),
+                                  ),
+                                  selected: false,
+                                  onSelected: (value) {},
+                                ),
+                              );
+                            }),
+                      ),
+              ),
+            ),
+
             // SingleChildScrollView(
             //   scrollDirection: Axis.horizontal,
             //   child: Padding(
@@ -114,16 +146,18 @@ class PresidentMyDashboard extends StatelessWidget {
             //         DashboardComponent(
             //             presidentMyDashboardController: controller,
             //             componentModel: controller
-            //                 .dashComponentsList[DashboardReportIds.SSP_LSSP]!),
+            //                 .dashComponentsList[DashboardReportIds
+            //                 .SSP_LSSP]!),
             //         DashboardComponent(
             //             presidentMyDashboardController: controller,
             //             componentModel: controller
-            //                 .dashComponentsList[DashboardReportIds.SSP_CSSP]!),
+            //                 .dashComponentsList[DashboardReportIds
+            //                 .SSP_CSSP]!),
             //         DashboardComponent(
             //             presidentMyDashboardController: controller,
             //             componentModel: controller
-            //                 .dashComponentsList[DashboardReportIds.SSP_SSSP]!),
-            //
+            //                 .dashComponentsList[DashboardReportIds
+            //                 .SSP_SSSP]!),
             //       ],
             //     ),
             //   ),
@@ -168,24 +202,23 @@ class PresidentMyDashboard extends StatelessWidget {
             //     ),
             //   ),
             // ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: CSizes.defaultSpace / 2,
-                      bottom: CSizes.defaultSpace / 2),
-                  child: Row(
-                    children: [
-                      DashboardComponent(
-                          presidentMyDashboardController: controller,
-                          componentModel: controller
-                              .dashComponentsList[DashboardReportIds.CDSP_CCDSP]!),
-                      // DualBarChart(),
-                    ],
-                  ),
-                ),
-              ),
-
+            //   SingleChildScrollView(
+            //     scrollDirection: Axis.horizontal,
+            //     child: Padding(
+            //       padding: const EdgeInsets.only(
+            //           left: CSizes.defaultSpace / 2,
+            //           bottom: CSizes.defaultSpace / 2),
+            //       child: Row(
+            //         children: [
+            //           DashboardComponent(
+            //               presidentMyDashboardController: controller,
+            //               componentModel: controller
+            //                   .dashComponentsList[DashboardReportIds.CDSP_CCDSP]!),
+            //           // DualBarChart(),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
           ]));
   }
 }
