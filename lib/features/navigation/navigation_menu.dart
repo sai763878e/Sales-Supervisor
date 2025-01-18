@@ -26,8 +26,8 @@ class NavigationMenu extends StatelessWidget {
               controller.selectedIndex.value = index,
           backgroundColor: isDarkMode ? CColors.black : Colors.white,
           indicatorColor: isDarkMode
-              ? Colors.white.withOpacity(0.1)
-              : Colors.black.withOpacity(0.1),
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.black.withValues(alpha: 0.1),
           destinations: [
             NavigationDestination(
                 icon: Icon(Iconsax.home),

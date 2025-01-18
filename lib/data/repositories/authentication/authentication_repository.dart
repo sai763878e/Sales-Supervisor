@@ -28,6 +28,7 @@ class AuthenticationRepository extends GetxController {
     }
     deviceStorage.read("IsFirstTime") != true
         ? Get.offAll(() => deviceStorage.read(PreferenceConstants.userMaster) == null ? LoginScreen() : NavigationMenu())
+        // ? Get.offAll(() =>  LoginScreen())
         : Get.offAll(() =>  OnBoardingScreen());
 
     // Get.offAll(() =>  OnBoardingScreen());

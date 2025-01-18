@@ -137,7 +137,9 @@
   "switchToHiEnd": "Switch to Hi-End",
   "switchToAll": "Switch to All",
   "switchToVolume": "Switch to Volume",
-  "switchToValue": "Switch to Value"
+  "switchToValue": "Switch to Value",
+  "filter": "Filter",
+  "apply": "Apply"
 
 
 }

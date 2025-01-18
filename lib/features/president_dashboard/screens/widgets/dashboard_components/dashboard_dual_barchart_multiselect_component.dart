@@ -70,7 +70,7 @@ class DashboardDualBarchartMultiselectComponent extends StatelessWidget {
               //   BoxShadow(
               //       color: isDark
               //           ? Colors.grey.shade900
-              //           : Colors.white.withOpacity(0.5),
+              //           : Colors.white.withValues(alpha: 0.5),
               //       // offset: Offset(-2, -2),
               //       blurRadius: 10,
               //       spreadRadius: 1)
@@ -79,7 +79,7 @@ class DashboardDualBarchartMultiselectComponent extends StatelessWidget {
           ),
           baseColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
           highlightColor:
-          isDark ? Colors.grey.shade500 : Colors.white.withOpacity(1),
+          isDark ? Colors.grey.shade500 : Colors.white.withValues(alpha: 1),
         )
             : Container(
           width: CHelperFunction.screenWidth() * 0.85,
@@ -98,7 +98,7 @@ class DashboardDualBarchartMultiselectComponent extends StatelessWidget {
               BoxShadow(
                   color: isDark
                       ? Colors.grey.shade900
-                      : Colors.white.withOpacity(0.5),
+                      : Colors.white.withValues(alpha: 0.5),
                   offset: Offset(-2, -2),
                   blurRadius: 10,
                   spreadRadius: 1)

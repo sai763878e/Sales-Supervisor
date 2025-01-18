@@ -25,7 +25,7 @@ class CProductCardVertical extends StatelessWidget {
         // padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           border: Border.all(
-              color: isDark ? CColors.grey.withOpacity(0.5) : CColors.white),
+              color: isDark ? CColors.grey.withValues(alpha: 0.5) : CColors.white),
           borderRadius: BorderRadius.circular(CSizes.productImageRadius),
           boxShadow: [CShadowStyle.verticalProductsShadow],
           color: isDark ? CColors.black : CColors.white,
@@ -51,7 +51,7 @@ class CProductCardVertical extends StatelessWidget {
                       radius: CSizes.sm,
                       padding: const EdgeInsets.symmetric(
                           horizontal: CSizes.sm, vertical: CSizes.xs),
-                      backgroundColor: CColors.secondary.withOpacity(0.8),
+                      backgroundColor: CColors.secondary.withValues(alpha: 0.8),
                       child: Text(
                         '25%',
                         style: Theme.of(context)

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'dashboard_report_ids.dart';
+import 'location_filter_model.dart';
 
 class DashboardComponentModel {
+  String uuid = "";
   bool isLoading;
+  bool isDuplicate=false;
   Map<String, dynamic>? response;
   DashboardReportIds type;
   String reportId;
@@ -13,6 +17,17 @@ class DashboardComponentModel {
   static const String valueHighEnd = "ValueHighEnd";
   static const String volumeAll = "VolumeAll";
   static const String volumeHighEnd = "VolumeHighEnd";
+
+  String userId="";
+  String userTypeId="";
+  String filterOptionBase="";
+  String filterOptionMonth="";
+  String filterOptionYear="";
+  String locationFilterUID="";
+
+   var locationFilterMap = <String, List<FilterDatum>>{}.obs;
+
+
   // List charData = [
   //   [10, 'Protein', Colors.purple],
   //   [50, 'Carbs', Colors.yellow],

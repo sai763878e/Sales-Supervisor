@@ -23,7 +23,7 @@ class LanguageListTile extends StatelessWidget {
         showBorder: true,
         borderColor: isDark ? Colors.grey.shade300 : CColors.grey,
         backgroundColor:
-            isSelected ? CColors.primary.withOpacity(0.2) : CColors.white,
+            isSelected ? CColors.primary.withValues(alpha: 0.2) : CColors.white,
         child: Padding(
           padding: const EdgeInsets.symmetric(
               horizontal: CSizes.lg, vertical: CSizes.md),

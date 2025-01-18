@@ -41,6 +41,7 @@ class CSizes {
   static const double borderRadiusSm = 4.0;
   static const double borderRadiusMd = 8.0;
   static const double borderRadiusLg = 12.0;
+  static const double borderRadiusXLg = 24.0;
 
   //divider height
   static const double dividerHeight = 4.0;

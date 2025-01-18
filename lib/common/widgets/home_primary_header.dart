@@ -27,13 +27,13 @@ class CHeaderContainer extends StatelessWidget {
                   top: -180,
                   right: -280,
                   child: CCircularContainer(
-                    backgroundColor: Colors.white.withOpacity(0.1),
+                    backgroundColor: Colors.white.withValues(alpha: 0.1),
                   )),
               Positioned(
                   top: 100,
                   right: -300,
                   child: CCircularContainer(
-                    backgroundColor: Colors.white.withOpacity(0.1),
+                    backgroundColor: Colors.white.withValues(alpha: 0.1),
                   )),
               child,
             ],

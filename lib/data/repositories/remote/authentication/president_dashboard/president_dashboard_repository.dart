@@ -18,15 +18,16 @@ class PresidentDashboardRepository {
     return _instance;
   }
 
-  Future<void> getDashboardData({required String userId,
-    required String userTypeId,
-    required String reportId,
-    required String reportWindowId,
-    required String filterOptionBase,
-    required String filterOptionYear,
-    required String filterOptionMonth,
-    required String locationFilterUID,
-    required Rx<DashboardComponentModel> model}) async {
+  Future<void> getDashboardData(
+      {required String userId,
+      required String userTypeId,
+      required String reportId,
+      required String reportWindowId,
+      required String filterOptionBase,
+      required String filterOptionYear,
+      required String filterOptionMonth,
+      required String locationFilterUID,
+      required Rx<DashboardComponentModel> model}) async {
     String url =
         'GetData?UserTypeId=$userTypeId&UserId=$userId&ReportId=$reportId&ReportWindowId=$reportWindowId&FilterOptionsBase=$filterOptionBase&FilterOptionsYear=$filterOptionYear&FilterOptionsMonth=$filterOptionMonth&LocationFilterUID=$locationFilterUID';
     try {
@@ -36,21 +37,70 @@ class PresidentDashboardRepository {
         print(url);
         print(response);
       }
-    } catch (e) {} finally {
+    } catch (e) {
+    } finally {
       // model.value.isLoading = false;
     }
   }
 
-  Future<LocationFilter> getLocationFilters({required String userId,
-    required String userTypeId,}) async {
+
+  Future<LocationFilter> getLocationFilters({
+    required String userId,
+    required String userTypeId,
+  }) async {
     String url = 'GetMyLocationFilters?UserTypeId=$userTypeId&UserId=$userId';
     try {
-      final response = await dio.get(url);
       if (kDebugMode) {
         print(url);
+      }
+
+      final response = await dio.get(url);
+      if (kDebugMode) {
         print(response);
       }
       return LocationFilter.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    } finally {}
+  }
+
+  Future<String?> postLocationFilters(
+      {required Map<String, dynamic> data1}) async {
+    String url = 'SaveLocationFilter';
+    // String url = 'SaveLocationFilter?jsonData=${data1.toString()}';
+    try {
+
+      // var jsonData = {'jsonData': data1.toString()};
+      var jsonData = {'jsonData': jsonEncode(data1)};
+
+      if (kDebugMode) {
+        print(url);
+        print(jsonData);
+      }
+
+      final response = await dio.post(
+        url,
+        data: jsonData,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          responseType: ResponseType.plain,
+        ),
+      );
+      if (kDebugMode) {
+        print(response);
+      }
+
+      String responseData = response.data.toString();
+
+      // Fix the invalid JSON (add quotes around the LocationFilterUID)
+      responseData = responseData.replaceAllMapped(
+        RegExp(r'"LocationFilterUID":\s*([A-F0-9\-]+)'), // Match UUID format
+            (match) => '"LocationFilterUID": "${match.group(1)}"',  // Add quotes around the matched value
+      );
+
+      return json.decode(responseData)[0]["LocationFilterUID"];
     } catch (e) {
       rethrow;
     } finally {}
