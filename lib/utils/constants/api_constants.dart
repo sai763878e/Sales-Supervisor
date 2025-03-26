@@ -1,0 +1,1 @@
+const OPEN_AI_KEY = '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';

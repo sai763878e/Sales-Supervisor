@@ -6,4 +6,6 @@ class DashboardComponentViewModel {
   String subTitle = "";
   Map<String, List> chartData = {};
   String key = "";
+
+  Map<String,List> tableListData = {};
 }

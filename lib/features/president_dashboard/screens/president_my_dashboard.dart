@@ -41,7 +41,6 @@ class PresidentMyDashboard extends StatelessWidget {
     // Get.create<DashboardPieChartController>(() => DashboardPieChartController());
     final isDark = CHelperFunction.isDarkMode(context);
 
-
     return SingleChildScrollView(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         ///Location Filters
@@ -82,7 +81,12 @@ class PresidentMyDashboard extends StatelessWidget {
                                     true;
                                 controller.locationFilterSelected.value =
                                     controller.locationTypesList[index].type;
-                                controller.showLocationFilterSheet(context,isDark,controller.locationFilterMap,true,null);
+                                controller.showLocationFilterSheet(
+                                    context,
+                                    isDark,
+                                    controller.locationFilterMap,
+                                    true,
+                                    null);
                               },
                               child: Container(
                                 decoration: const BoxDecoration(
@@ -102,140 +106,135 @@ class PresidentMyDashboard extends StatelessWidget {
           ),
         ),
 
-        Obx((){
+        Obx(() {
           return controller.isPageLoading.value
               ? Shimmer.fromColors(
-            baseColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
-            highlightColor: isDark
-                ? Colors.grey.shade500
-                : Colors.white.withValues(alpha: 1),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDark ? Colors.black : Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-          )
+                  baseColor:
+                      isDark ? Colors.grey.shade600 : Colors.grey.shade100,
+                  highlightColor: isDark
+                      ? Colors.grey.shade500
+                      : Colors.white.withValues(alpha: 1),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.black : Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                )
               : SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  left: CSizes.defaultSpace / 2,
-                  bottom: CSizes.defaultSpace / 2),
-              child: Row(
-                  children: controller
-                      .dashComponentsList[DashboardReportIds.SSP_LSSP]!
-                      .map((ele) => DashboardComponent(
-                      presidentMyDashboardController: controller,
-                      componentModel: ele))
-                      .toList()
-                // [
-                // DashboardComponent(
-                //     presidentMyDashboardController: controller,
-                //     componentModel: controller.dashComponentsList[
-                //     DashboardReportIds.SSP_LSSP]!),
-                // // DashboardComponent(
-                // //     presidentMyDashboardController: controller,
-                // //     componentModel: controller.dashComponentsList[
-                // //         DashboardReportIds.SSP_CSSP]!),
-                // // DashboardComponent(
-                // //     presidentMyDashboardController: controller,
-                // //     componentModel: controller.dashComponentsList[
-                // //         DashboardReportIds.SSP_SSSP]!),
-                // ],
-              ),
-            ),
-          );
-        }),
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: CSizes.defaultSpace / 2,
+                        bottom: CSizes.defaultSpace / 2),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.SSP_LSSP,
+                          loadRow: controller.load_SSP_LSSP,
+                          isDark: isDark,
+                        ),
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.SSP_CSSP,
+                          loadRow: controller.load_SSP_CSSP,
+                          isDark: isDark,
+                        ),
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.SSP_SSSP,
+                          loadRow: controller.load_SSP_SSSP,
+                          isDark: isDark,
+                        ),
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.SSTA_CSSTA,
+                          loadRow: controller.load_SSTA_CSSTA,
+                          isDark: isDark,
+                        ),
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.SSTA_SSSTA,
+                          loadRow: controller.load_SSTA_SSSTA,
+                          isDark: isDark,
+                        ),
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.SPP_LSPP,
+                          loadRow: controller.load_SPP_LSPP,
+                          isDark: isDark,
+                        ),
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.SITO_LSITO,
+                          loadRow: controller.load_SITO_LSITO,
+                          isDark: isDark,
+                        ),
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.CDSP_CCDSP,
+                          loadRow: controller.load_CDSP_CCDSP,
+                          isDark: isDark,
+                        ),
+                        SingleDashboardRow(
+                          controller: controller,
+                          type: DashboardReportIds.ISDP_VISDP,
+                          loadRow: controller.load_ISDP_VISDP,
+                          isDark: isDark,
+                        ),
 
-        // SingleChildScrollView(
-        //   scrollDirection: Axis.horizontal,
-        //   child: Padding(
-        //     padding: const EdgeInsets.only(
-        //         left: CSizes.defaultSpace / 2, bottom: CSizes.defaultSpace / 2),
-        //     child: Row(
-        //         children: controller
-        //             .dashComponentsList[DashboardReportIds.SSP_LSSP]!
-        //             .map((ele) => DashboardComponent(
-        //                 presidentMyDashboardController: controller,
-        //                 componentModel: ele))
-        //             .toList()
-        //         // [
-        //         // DashboardComponent(
-        //         //     presidentMyDashboardController: controller,
-        //         //     componentModel: controller.dashComponentsList[
-        //         //     DashboardReportIds.SSP_LSSP]!),
-        //         // // DashboardComponent(
-        //         // //     presidentMyDashboardController: controller,
-        //         // //     componentModel: controller.dashComponentsList[
-        //         // //         DashboardReportIds.SSP_CSSP]!),
-        //         // // DashboardComponent(
-        //         // //     presidentMyDashboardController: controller,
-        //         // //     componentModel: controller.dashComponentsList[
-        //         // //         DashboardReportIds.SSP_SSSP]!),
-        //         // ],
-        //         ),
-        //   ),
-        // ),
-        // SingleChildScrollView(
-        //   scrollDirection: Axis.horizontal,
-        //   child: Padding(
-        //     padding: const EdgeInsets.only(
-        //         left: CSizes.defaultSpace / 2,
-        //         bottom: CSizes.defaultSpace / 2),
-        //     child: Row(
-        //       children: [
-        //
-        //         // //TODO Target vs Achicevement Chart Need to implement here
-        //         //
-        //         // DashboardComponent(
-        //         //     presidentMyDashboardController: controller,
-        //         //     componentModel: controller
-        //         //         .dashComponentsList[DashboardReportIds.SSTA_CSSTA]!),
-        //         // DashboardComponent(
-        //         //     presidentMyDashboardController: controller,
-        //         //     componentModel: controller
-        //         //         .dashComponentsList[DashboardReportIds.SSTA_SSSTA]!),
-        //
-        //       ],
-        //     ),
-        //   ),
-        // ),
-        // SingleChildScrollView(
-        //   scrollDirection: Axis.horizontal,
-        //   child: Padding(
-        //     padding: const EdgeInsets.only(
-        //         left: CSizes.defaultSpace / 2,
-        //         bottom: CSizes.defaultSpace / 2),
-        //     child: Row(
-        //       children: [
-        //         DashboardComponent(
-        //             presidentMyDashboardController: controller,
-        //             componentModel: controller
-        //                 .dashComponentsList[DashboardReportIds.SPP_LSPP]!),
-        //         // DualBarChart(),
-        //       ],
-        //     ),
-        //   ),
-        // ),
-        //   SingleChildScrollView(
-        //     scrollDirection: Axis.horizontal,
-        //     child: Padding(
-        //       padding: const EdgeInsets.only(
-        //           left: CSizes.defaultSpace / 2,
-        //           bottom: CSizes.defaultSpace / 2),
-        //       child: Row(
-        //         children: [
-        //           DashboardComponent(
-        //               presidentMyDashboardController: controller,
-        //               componentModel: controller
-        //                   .dashComponentsList[DashboardReportIds.CDSP_CCDSP]!),
-        //           // DualBarChart(),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
+                      ],
+                    ),
+                  ),
+                );
+        }),
       ]),
+    );
+  }
+}
+
+class SingleDashboardRow extends StatelessWidget {
+  const SingleDashboardRow({
+    super.key,
+    required this.controller,
+    required this.type,
+    required this.loadRow,
+    required this.isDark,
+  });
+
+  final PresidentMyDashboardController controller;
+  final DashboardReportIds type;
+  final Rx<bool> loadRow;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => loadRow.value
+          ? Shimmer.fromColors(
+              baseColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
+              highlightColor: isDark
+                  ? Colors.grey.shade500
+                  : Colors.white.withValues(alpha: 1),
+              child: Container(
+                height: CSizes.dashboardComponent,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.black : Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+            )
+          : Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+              children: controller.dashComponentsList[type]!
+                  .map((ele) => DashboardComponent(
+                        presidentMyDashboardController: controller,
+                        componentModel: ele,
+                        loadRow: loadRow,
+                      ))
+                  .toList()),
     );
   }
 }

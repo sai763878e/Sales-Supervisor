@@ -105,4 +105,38 @@ class PresidentDashboardRepository {
       rethrow;
     } finally {}
   }
+
+  Future<String?> generateDescription(String inputJson) async {
+    const String apiUrl = 'https://api.cohere.ai/generate';
+    const String _apiKey   = 'LiccjtZ5OjwiZPSDHGlxygXTevcrPSKPorhq95BP';
+
+    final Dio _dio = Dio();
+    try {
+      final response = await _dio.post(
+        apiUrl,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $_apiKey',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: jsonEncode({
+          'model': 'command-xlarge-nightly', // Free-tier model
+          'prompt': 'Generate a description for this JSON data: $inputJson',
+          'max_tokens': 150,
+          'temperature': 0.7, // Adjust for creativity
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        return responseData['text'].trim();
+      } else {
+        throw Exception('Failed to generate description: ${response.statusMessage}');
+      }
+    } catch (e) {
+      throw Exception('Error while calling Cohere API: $e');
+    }
+  }
+
 }

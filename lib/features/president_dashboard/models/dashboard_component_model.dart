@@ -18,12 +18,16 @@ class DashboardComponentModel {
   static const String volumeAll = "VolumeAll";
   static const String volumeHighEnd = "VolumeHighEnd";
 
+  String flipData="";
+
   String userId="";
   String userTypeId="";
   String filterOptionBase="";
   String filterOptionMonth="";
   String filterOptionYear="";
   String locationFilterUID="";
+
+  String aiResponse="";
 
    var locationFilterMap = <String, List<FilterDatum>>{}.obs;
 

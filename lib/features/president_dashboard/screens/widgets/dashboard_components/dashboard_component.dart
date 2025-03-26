@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,9 +10,13 @@ import 'package:sales_supervisor/features/president_dashboard/controllers/dashbo
 import 'package:sales_supervisor/features/president_dashboard/controllers/dashboard_pie_chart_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/controllers/president_my_dashboard_controller.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/ai_chat_widget.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/circular_donought_pie_chart.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/column_charts.dart';
 import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/dual_column_charts.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/charts/stacked_column_charts.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_table_charts.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/flip_data_component.dart';
 import 'package:sales_supervisor/utils/constants/sizes.dart';
 import 'package:sales_supervisor/utils/helpers/helper_functions.dart';
 import 'package:sales_supervisor/utils/language/app_language_utils.dart';
@@ -22,10 +27,12 @@ class DashboardComponent extends StatelessWidget {
     super.key,
     required this.presidentMyDashboardController,
     required this.componentModel,
+    required this.loadRow,
   });
 
   PresidentMyDashboardController presidentMyDashboardController;
   Rx<DashboardComponentModel> componentModel;
+  final Rx<bool> loadRow;
 
   // Widget chart;
 
@@ -47,50 +54,83 @@ class DashboardComponent extends StatelessWidget {
         filter = "Filter",
         duplicate = "Duplicate",
         export = "Export",
+        aiAnalysis = "AI Analysis",
         fullScreen = "Full Screen";
 
     final controller = Get.put(
         DashboardComponentController(
-            presidentMyDashboardController, componentModel),
+            presidentMyDashboardController, componentModel, loadRow),
         tag: componentModel.value.uuid);
     if (componentModel.value.isLoading) {
       controller.loadDashboard();
     } else {}
     Widget getChartWidget() {
-      if (controller.pieChartModels.contains(componentModel.value.type)) {
-        return CircularDonoughtPieChart(
-          chartData: controller
-                      .dashboardChartModelMap[controller.selectedView.value] !=
-                  null
-              ? controller
-                  .dashboardChartModelMap[controller.selectedView.value]!
-                  .chartData[controller.selectedSubView.value]!
-              : [],
-          isHorizontal: true,
-          isVisible: false,
-        );
-      } else if (controller.singleBarChartModels
-          .contains(componentModel.value.type)) {
-        return ColumnCharts(
-          chartData: controller
-                      .dashboardChartModelMap[controller.selectedView.value] !=
-                  null
-              ? controller
-                  .dashboardChartModelMap[controller.selectedView.value]!
-                  .chartData[controller.selectedSubView.value]
-              : [],
-        );
-      } else if (controller.dualBarChartModels
-          .contains(componentModel.value.type)) {
-        return DualColumnCharts(
-          chartData: controller
-                      .dashboardChartModelMap[controller.selectedView.value] !=
-                  null
-              ? controller
-                  .dashboardChartModelMap[controller.selectedView.value]!
-                  .chartData[controller.selectedSubView.value]
-              : [],
-        );
+      if (controller.aiAnalysisEnabled.value) {
+        return AIChatWidget(message: controller.model.value.aiResponse);
+      }
+      else if(controller.flipComponentEnabled.value){
+        return FlipDataComponent(message: controller.model.value.flipData);
+      }
+      else {
+        if (controller.pieChartModels.contains(componentModel.value.type)) {
+          return CircularDonoughtPieChart(
+            chartData: controller.dashboardChartModelMap[
+                        controller.selectedView.value] !=
+                    null
+                ? controller
+                    .dashboardChartModelMap[controller.selectedView.value]!
+                    .chartData[controller.selectedSubView.value]!
+                : [],
+            isHorizontal: true,
+            isVisible: false,
+          );
+        } else if (controller.singleBarChartModels
+            .contains(componentModel.value.type)) {
+          return ColumnCharts(
+            chartData: controller.dashboardChartModelMap[
+                        controller.selectedView.value] !=
+                    null
+                ? controller
+                    .dashboardChartModelMap[controller.selectedView.value]!
+                    .chartData[controller.selectedSubView.value]
+                : [],
+          );
+        } else if (controller.dualBarChartModels
+            .contains(componentModel.value.type)) {
+          return DualColumnCharts(
+            chartData: controller.dashboardChartModelMap[
+                        controller.selectedView.value] !=
+                    null
+                ? controller
+                    .dashboardChartModelMap[controller.selectedView.value]!
+                    .chartData[controller.selectedSubView.value]
+                : [],
+          );
+        }
+        else if (controller.stackedChartModels
+            .contains(componentModel.value.type)) {
+          return StackedColumnCharts(
+            chartData: controller.dashboardChartModelMap[
+            controller.selectedView.value] !=
+                null
+                ? controller
+                .dashboardChartModelMap[controller.selectedView.value]!
+                .chartData[controller.selectedSubView.value]
+                : [],
+          );
+        }
+        else if(controller.tableModels
+            .contains(componentModel.value.type)){
+          return DashboardTableCharts(
+            data: controller.dashboardChartModelMap[
+            controller.selectedView.value] !=
+                null
+                ? controller
+                .dashboardChartModelMap[controller.selectedView.value]!
+                .tableListData[controller.selectedSubView.value]
+                : [],
+          );
+        }
       }
 
       return Container();
@@ -107,21 +147,6 @@ class DashboardComponent extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isDark ? Colors.black : Colors.white,
                     borderRadius: BorderRadius.circular(cardRadius),
-
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //       color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
-                    //       // offset: Offset(3, 3),
-                    //       blurRadius: 10,
-                    //       spreadRadius: 1),
-                    //   BoxShadow(
-                    //       color: isDark
-                    //           ? Colors.grey.shade900
-                    //           : Colors.white.withValues(alpha: 0.5),
-                    //       // offset: Offset(-2, -2),
-                    //       blurRadius: 10,
-                    //       spreadRadius: 1)
-                    // ],
                   ),
                 ),
                 baseColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
@@ -267,13 +292,20 @@ class DashboardComponent extends StatelessWidget {
                                           title: Text(duplicate),
                                         ),
                                         value: duplicate,
-                                      ),PopupMenuItem(
+                                      ),
+                                      PopupMenuItem(
                                         child: ListTile(
-                                          leading: Icon(
-                                              Icons.share),
+                                          leading: Icon(Icons.share),
                                           title: Text(export),
                                         ),
                                         value: export,
+                                      ),
+                                      PopupMenuItem(
+                                        child: ListTile(
+                                          leading: Icon(Icons.share),
+                                          title: Text(aiAnalysis),
+                                        ),
+                                        value: aiAnalysis,
                                       ),
                                     ],
                                     onSelected: (newValue) {
@@ -281,9 +313,11 @@ class DashboardComponent extends StatelessWidget {
                                           title: newValue, message: newValue);
                                       if (newValue.isCaseInsensitiveContains(
                                           tableView)) {
+                                        controller.tableViewComponent();
                                       } else if (newValue
                                           .isCaseInsensitiveContains(
                                               flipData)) {
+                                        controller.flipComponent();
                                       } else if (newValue
                                           .isCaseInsensitiveContains(filter)) {
                                         controller.filterComponent(
@@ -292,10 +326,13 @@ class DashboardComponent extends StatelessWidget {
                                           .isCaseInsensitiveContains(
                                               duplicate)) {
                                         controller.duplicateComponent();
-                                      }else if (newValue
-                                          .isCaseInsensitiveContains(
-                                              export)) {
+                                      } else if (newValue
+                                          .isCaseInsensitiveContains(export)) {
                                         controller.captureAndShare();
+                                      } else if (newValue
+                                          .isCaseInsensitiveContains(
+                                              aiAnalysis)) {
+                                        controller.generateAIAnalysis();
                                       }
                                     },
                                   )
@@ -309,6 +346,7 @@ class DashboardComponent extends StatelessWidget {
                           flex: 1,
                           child: getChartWidget(),
                         ),
+
                         // Spacer(),
                         Container(
                           // color: Colors.blue.shade100,
@@ -323,42 +361,79 @@ class DashboardComponent extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Icon(
-                                  CupertinoIcons.fullscreen,
-                                  color: Colors.green,
+                                Flexible(
+                                  child: Icon(
+                                    CupertinoIcons.fullscreen,
+                                    color: Colors.green,
+                                  ),
                                 ),
-                                if (controller.centerViewsList.isNotEmpty)
-                                  GestureDetector(
-                                    onTap: () => controller.changeCenterViews(),
-                                    child: Text(
-                                      controller.getCenterViewToDisplay(),
-                                      // controller.viewAll.value
-                                      //     ? AppLanguageUtils.instance.switchToHiEnd
-                                      //     : AppLanguageUtils.instance.switchToAll,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium!
-                                          .copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.blue.shade500),
+                                Flexible(
+                                  child: Obx(
+                                    () => SizedBox(
+                                      width: double.infinity,
+                                      child: DropdownButtonFormField<String>(
+                                        decoration: InputDecoration(
+                                          enabledBorder: UnderlineInputBorder(
+                                            // Bottom line when not focused
+                                            borderSide: BorderSide(
+                                                color: Colors.blue, width: 2),
+                                          ),
+                                          focusedBorder: UnderlineInputBorder(
+                                            // Bottom line when focused
+                                            borderSide: BorderSide(
+                                                color: Colors.red, width: 2),
+                                          ),
+                                        ),
+                                        // width: 100,
+                                        // enableSearch: true,
+                                        value:
+                                            controller.switchViewSelected.value!=null ? controller.switchViewSelected.value: "",
+
+                                        // menuStyle: MenuStyle(),
+
+                                        items: controller.switchViewsList
+                                            .map((value) => DropdownMenuItem(
+                                                value: value,
+                                                child: Text(value)))
+                                            .toList(),
+                                        onChanged: (String? value) => controller
+                                            .changeSwitchSelectedViews(value),
+                                      ),
                                     ),
                                   ),
-                                if (controller.rightViewsList.isNotEmpty)
-                                  GestureDetector(
-                                    onTap: () => controller.changeRightViews(),
-                                    child: Text(
-                                      controller.getRightViewToDisplay(),
-                                      // controller.viewValue.value
-                                      //     ? AppLanguageUtils.instance.switchToVolume
-                                      //     : AppLanguageUtils.instance.switchToValue,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium!
-                                          .copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.blue.shade500),
-                                    ),
-                                  ),
+                                ),
+                                // if (controller.centerViewsList.isNotEmpty)
+                                //   GestureDetector(
+                                //     onTap: () => controller.changeCenterViews(),
+                                //     child: Text(
+                                //       controller.getCenterViewToDisplay(),
+                                //       // controller.viewAll.value
+                                //       //     ? AppLanguageUtils.instance.switchToHiEnd
+                                //       //     : AppLanguageUtils.instance.switchToAll,
+                                //       style: Theme.of(context)
+                                //           .textTheme
+                                //           .labelMedium!
+                                //           .copyWith(
+                                //               fontWeight: FontWeight.w700,
+                                //               color: Colors.blue.shade500),
+                                //     ),
+                                //   ),
+                                // if (controller.rightViewsList.isNotEmpty)
+                                //   GestureDetector(
+                                //     onTap: () => controller.changeRightViews(),
+                                //     child: Text(
+                                //       controller.getRightViewToDisplay(),
+                                //       // controller.viewValue.value
+                                //       //     ? AppLanguageUtils.instance.switchToVolume
+                                //       //     : AppLanguageUtils.instance.switchToValue,
+                                //       style: Theme.of(context)
+                                //           .textTheme
+                                //           .labelMedium!
+                                //           .copyWith(
+                                //               fontWeight: FontWeight.w700,
+                                //               color: Colors.blue.shade500),
+                                //     ),
+                                //   ),
                               ],
                             ),
                           ),

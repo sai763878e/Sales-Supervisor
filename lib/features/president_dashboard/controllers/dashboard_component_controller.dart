@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -14,6 +16,7 @@ import 'package:sales_supervisor/features/president_dashboard/models/dashboard_c
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_view_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_pie_chart_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_report_ids.dart';
+import 'package:sales_supervisor/utils/constants/api_constants.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -23,7 +26,10 @@ class DashboardComponentController extends GetxController {
   DashboardComponentController(
     this.presidentMyDashboardController,
     this.model,
+       this.loadRow,
+
   );
+  Rx<bool> loadRow;
 
   PresidentMyDashboardController presidentMyDashboardController;
   Rx<DashboardComponentModel> model;
@@ -36,6 +42,10 @@ class DashboardComponentController extends GetxController {
   final selectedView = "".obs;
   final rightViewsList = <String>[].obs;
   final centerViewsList = <String>[].obs;
+
+  final switchViewSelected = "".obs;
+  final switchViewsList = <String>[].obs;
+
   int rightViewSelected = 0;
   int centerViewSelected = 0;
 
@@ -84,16 +94,25 @@ class DashboardComponentController extends GetxController {
     });
   }
 
-  final pieChartModels = {DashboardReportIds.SSP_LSSP};
+  final pieChartModels = {DashboardReportIds.SSP_LSSP,DashboardReportIds.ISDP_VISDP,};
   final singleBarChartModels = {
     DashboardReportIds.SSP_CSSP,
-    DashboardReportIds.SSP_SSSP
+    DashboardReportIds.SSP_SSSP,
+    DashboardReportIds.CDSP_CCDSP,
+
   };
   final dualBarChartModels = {
     DashboardReportIds.SSTA_CSSTA,
     DashboardReportIds.SSTA_SSSTA,
     DashboardReportIds.SPP_LSPP,
   };
+
+  final stackedChartModels = {
+    DashboardReportIds.SITO_LSITO,
+  };
+
+  final tableModels = getTableDashboard();
+
 
   parseSSPLSSPDashboard(Rx<DashboardComponentModel> model) async {
     try {
@@ -104,11 +123,15 @@ class DashboardComponentController extends GetxController {
 
       rightViewsList.value = [];
       centerViewsList.value = [];
+      switchViewsList.value = [""];
       for (var view in rightViews) {
         rightViewsList.value.add(view);
+        switchViewsList.value.add(view);
+
       }
       for (var view in centerViews) {
         centerViewsList.value.add(view);
+        switchViewsList.value.add(view);
       }
 
       var views = result["Views"] as Map<String, dynamic>;
@@ -121,7 +144,7 @@ class DashboardComponentController extends GetxController {
         dashboardComponentViewModel.subTitle = value["Subtitle"];
         dashboardComponentViewModel.key = key;
 
-        var header = value["Header"];
+        var header = value["Header"] as Map<String,dynamic>;
         var dataMap = value["Data"] as Map<String, dynamic>;
 
         if (pieChartModels.contains(model.value.type)) {
@@ -167,8 +190,43 @@ class DashboardComponentController extends GetxController {
             dashboardComponentViewModel.chartData.addIf(true, key, chartData);
           });
         }
+        else if(stackedChartModels.contains(model.value.type)){
+          dataMap.forEach((key, value) {
+            var chartData = [];
+//do not change sequence index will lead to crashes
+            for (var data in value) {
+              chartData.add([
+                data[header["Column1"]], //label
+                data[header["Column2"]], //sell in
+                data[header["Column3"]], //sell through
+                data[header["Column4"]], //sell out
+                data[header["Column5"]], //sell Percentage
+                // Colors.indigo,
+                // Colors.blueAccent,
+              ]);
+            }
+            dashboardComponentViewModel.chartData.addIf(true, key, chartData);
+          });
+        }
+        //
+        else if(tableModels.contains(model.value.type)){
+          dataMap.forEach((key,value){
+            var tableData = [];
+            for(var data in value){
+              List<dynamic> element = [];
+              header.forEach((key,value){
+                element.add(data[value]);
+              });
+              tableData.add(element);
+            }
 
-        dashboardChartModelMap.value
+            dashboardComponentViewModel.tableListData.addIf(true, key, tableData);
+
+          });
+
+        }
+
+        dashboardChartModelMap
             .addIf(true, key, dashboardComponentViewModel);
       });
 
@@ -198,11 +256,27 @@ class DashboardComponentController extends GetxController {
 
     if (view.isNotEmpty) selectedView.value = view;
 
+    if(rightViewsList.isEmpty && centerViewsList.isEmpty){
+      selectedView.value = dashboardChartModelMap.keys.first;
+    }
+
     try {
-      selectedSubView.value =
-          dashboardChartModelMap[selectedView.value]!.chartData.keys.first;
-      selectedSubViewList.value =
-          dashboardChartModelMap[selectedView.value]!.chartData.keys.toList();
+      if(getTableDashboard().contains(model.value.type)){
+        selectedSubView.value =
+            dashboardChartModelMap[selectedView.value]!.tableListData.keys.first;
+        selectedSubViewList.value =
+            dashboardChartModelMap[selectedView.value]!.tableListData.keys.toList();
+
+        switchViewSelected.value = switchViewsList!.value.first;
+      }else{
+        selectedSubView.value =
+            dashboardChartModelMap[selectedView.value]!.chartData.keys.first;
+        selectedSubViewList.value =
+            dashboardChartModelMap[selectedView.value]!.chartData.keys.toList();
+
+        switchViewSelected.value = switchViewsList!.value.first;
+      }
+
     } catch (e) {}
 
     selectedSubView.refresh();
@@ -230,6 +304,12 @@ class DashboardComponentController extends GetxController {
       selectedSubView.value = value;
     });
     selectedSubView.refresh();
+  }
+  changeSwitchSelectedViews(String? value) {
+    value?.let((it) {
+      switchViewSelected.value = value;
+    });
+    switchViewSelected.refresh();
   }
 
   String getCenterView() {
@@ -279,9 +359,22 @@ class DashboardComponentController extends GetxController {
     try {
       // presidentMyDashboardController.duplicateComponent(model.value.type,DashboardReportIds.SSTA_TCSSTA);
       presidentMyDashboardController.duplicateComponent(
-          model.value, model.value.type);
+          model.value, model.value.type,loadRow);
     } catch (e) {}
     // presidentMyDashboardController.dashComponentsList[model.value.reportWindowId].add()
+  }
+
+  tableViewComponent() async{
+    try{
+      DashboardReportIds? tableType = getTableId(model.value.type);
+
+      if(tableType != null){
+        presidentMyDashboardController.addTableComponent(
+            model.value, tableType,loadRow);
+      }
+    }catch(e){
+
+    }
   }
 
   filterComponent(BuildContext context, bool isDark,
@@ -292,6 +385,7 @@ class DashboardComponentController extends GetxController {
           context, isDark, model.value.locationFilterMap, false, controller);
     } catch (e) {}
   }
+
 
   submitComponentLocationFilter(
       RxMap<String, List<FilterDatum>> locationFilterMap) async {
@@ -358,6 +452,82 @@ class DashboardComponentController extends GetxController {
       }
     } catch (e) {
       print("Error sharing image: $e");
+    }
+  }
+
+  final aiAnalysisEnabled = false.obs;
+
+  generateAIAnalysis() async {
+    try {
+      final messages = <Map<String, dynamic>>[];
+      messages.add(model.value.response!);
+
+      // final openAI = OpenAI.instance.build(
+      //   token: OPEN_AI_KEY,
+      //   baseOption: HttpSetup(
+      //     receiveTimeout: const Duration(seconds: 30),
+      //   ),
+      //   enableLog: true,
+      // );
+      //
+
+      //
+      // final request = ChatCompleteText(
+      //     model: GptTurboChatModel(), messages: messages, maxToken: 200);
+      //
+      // final response = await openAI.onChatCompletion(request: request);
+      //
+      // for(var element in response!.choices){
+      //   if(element.message != null){
+      //     print(element.message!.content);
+      //   }
+      // }
+
+      final response1 = await presidentDashboardRepository
+          .generateDescription(jsonEncode(model.value.response));
+
+      if(response1 != null){
+        model.value.aiResponse = response1;
+      }
+
+      aiAnalysisEnabled.value = true;
+      aiAnalysisEnabled.refresh();
+
+
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  final flipComponentEnabled = false.obs;
+
+
+  flipComponent() async {
+
+    try {
+      if(flipComponentEnabled.value){
+        flipComponentEnabled.value = false;
+        flipComponentEnabled.refresh();
+      }else{
+        var filterDate = 'Selected Filters:';
+        model.value.locationFilterMap.forEach((key,value){
+          filterDate+='\n$key:';
+          for (var element in value) {
+            if(element.isSelected == 1 || model.value.locationFilterUID.isEmpty) filterDate+='\n${element.name},';
+          }
+        });
+
+        model.value.flipData = filterDate;
+
+        flipComponentEnabled.value = true;
+        flipComponentEnabled.refresh();
+      }
+
+
+
+
+    } catch (e) {
+      print(e);
     }
   }
 }

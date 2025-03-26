@@ -41,6 +41,17 @@ class PresidentMyDashboardController extends GetxController {
   final locationTypesList = <LocationTypesModel>[].obs;
   final locationFilterSelected = "".obs;
 
+  final load_SSP_LSSP = false.obs;
+  final load_SSP_CSSP = false.obs;
+  final load_SSP_SSSP = false.obs;
+
+  final load_SSTA_CSSTA = false.obs;
+  final load_SSTA_SSSTA = false.obs;
+  final load_SPP_LSPP = false.obs;
+  final load_SITO_LSITO = false.obs;
+  final load_CDSP_CCDSP = false.obs;
+  final load_ISDP_VISDP = false.obs;
+
   @override
   Future<void> onInit() async {
     if (UserPref.i.getUserData()?.User_Type != null) {
@@ -365,7 +376,7 @@ class PresidentMyDashboardController extends GetxController {
   }
 
   duplicateComponent(
-      DashboardComponentModel model, DashboardReportIds type) async {
+      DashboardComponentModel model, DashboardReportIds type, Rx<bool> loadRow) async {
     var dashboardList = dashComponentsList[model.type]!;
     Rx<DashboardComponentModel> dashboardComponentModel =
         DashboardComponentModel(
@@ -392,6 +403,40 @@ class PresidentMyDashboardController extends GetxController {
     // dashComponentsList.assign(type, dashboardComponentModel);
     dashComponentsList.addIf(true, type, dashboardList);
 
-    dashComponentsList.refresh();
+    // dashComponentsList.refresh();
+    loadRow.refresh();
+
+  }
+  addTableComponent(
+      DashboardComponentModel model, DashboardReportIds type, Rx<bool> loadRow) async {
+    var dashboardList = dashComponentsList[model.type]!;
+    Rx<DashboardComponentModel> dashboardComponentModel =
+        DashboardComponentModel(
+      type: type,
+    ).obs;
+
+    dashboardComponentModel.value.reportId = type.name.split("_")[0];
+    dashboardComponentModel.value.reportWindowId = type.name.split("_")[1];
+    dashboardComponentModel.value.isLoading = true;
+    // dashboardComponentModel.value.response = model.response;
+    // dashboardComponentModel.value.isDuplicate = true;
+    dashboardComponentModel.value.uuid = Uuid().v1();
+
+    dashboardComponentModel.value.userId = model.userId;
+    dashboardComponentModel.value.userTypeId = model.userTypeId;
+    dashboardComponentModel.value.filterOptionBase = model.filterOptionBase;
+    dashboardComponentModel.value.filterOptionMonth = model.filterOptionMonth;
+    dashboardComponentModel.value.filterOptionYear = model.filterOptionYear;
+    dashboardComponentModel.value.locationFilterUID = model.locationFilterUID;
+    dashboardComponentModel.value.locationFilterMap = cloneLocationFilterMap(model.locationFilterMap);
+
+    dashboardList.add(dashboardComponentModel);
+
+    // dashComponentsList.assign(type, dashboardComponentModel);
+    dashComponentsList.addIf(true, type, dashboardList);
+
+    // dashComponentsList.refresh();
+    loadRow.refresh();
+
   }
 }
