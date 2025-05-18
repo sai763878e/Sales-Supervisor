@@ -109,17 +109,17 @@ class PresidentDashboardRepository {
   Future<String?> generateDescription(String inputJson) async {
     const String apiUrl = 'https://api.cohere.ai/generate';
     // const String _apiKey   = 'LiccjtZ5OjwiZPSDHGlxygXTevcrPSKPorhq95BP';
-    const String _apiKey   = '';
+    // const String _apiKey   = '';
 
     final Dio _dio = Dio();
     try {
       final response = await _dio.post(
         apiUrl,
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $_apiKey',
-            'Content-Type': 'application/json',
-          },
+          // headers: {
+          //   'Authorization': 'Bearer $_apiKey',
+          //   'Content-Type': 'application/json',
+          // },
         ),
         data: jsonEncode({
           'model': 'command-xlarge-nightly', // Free-tier model
