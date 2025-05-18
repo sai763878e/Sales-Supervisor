@@ -108,7 +108,8 @@ class PresidentDashboardRepository {
 
   Future<String?> generateDescription(String inputJson) async {
     const String apiUrl = 'https://api.cohere.ai/generate';
-    const String _apiKey   = 'LiccjtZ5OjwiZPSDHGlxygXTevcrPSKPorhq95BP';
+    // const String _apiKey   = 'LiccjtZ5OjwiZPSDHGlxygXTevcrPSKPorhq95BP';
+    const String _apiKey   = '';
 
     final Dio _dio = Dio();
     try {

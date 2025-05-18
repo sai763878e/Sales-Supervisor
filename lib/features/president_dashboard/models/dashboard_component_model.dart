@@ -7,7 +7,8 @@ import 'location_filter_model.dart';
 class DashboardComponentModel {
   String uuid = "";
   bool isLoading;
-  bool isDuplicate=false;
+  bool doSmoothScroll=false;
+  bool isFullScreen=false;
   Map<String, dynamic>? response;
   DashboardReportIds type;
   String reportId;

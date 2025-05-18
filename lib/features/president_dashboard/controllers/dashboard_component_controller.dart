@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,6 +18,7 @@ import 'package:sales_supervisor/features/president_dashboard/models/dashboard_r
 import 'package:sales_supervisor/utils/constants/api_constants.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/location_filter_model.dart';
 
@@ -26,9 +26,9 @@ class DashboardComponentController extends GetxController {
   DashboardComponentController(
     this.presidentMyDashboardController,
     this.model,
-       this.loadRow,
-
+    this.loadRow,
   );
+
   Rx<bool> loadRow;
 
   PresidentMyDashboardController presidentMyDashboardController;
@@ -39,11 +39,8 @@ class DashboardComponentController extends GetxController {
   int? id;
 
   final dashboardChartModelMap = <String, DashboardComponentViewModel>{}.obs;
-  final selectedView = "".obs;
-  final rightViewsList = <String>[].obs;
-  final centerViewsList = <String>[].obs;
 
-  final switchViewSelected = "".obs;
+  final selectedView = "".obs;
   final switchViewsList = <String>[].obs;
 
   int rightViewSelected = 0;
@@ -59,6 +56,8 @@ class DashboardComponentController extends GetxController {
 
   final GlobalKey repaintKey = GlobalKey();
 
+  // final GlobalKey _targetKey = GlobalKey();
+
   @override
   void onInit() {
     super.onInit();
@@ -71,13 +70,6 @@ class DashboardComponentController extends GetxController {
   }
 
   Future<void> loadDashboard() async {
-    // model.value.isLoading=true;
-
-    // model.refresh();
-    id = random.nextInt(256);
-    if (kDebugMode) {
-      print('load data of $id start at ${DateTime.now()}');
-    }
     presidentDashboardRepository
         .getDashboardData(
             userId: model.value.userId,
@@ -94,26 +86,6 @@ class DashboardComponentController extends GetxController {
     });
   }
 
-  final pieChartModels = {DashboardReportIds.SSP_LSSP,DashboardReportIds.ISDP_VISDP,};
-  final singleBarChartModels = {
-    DashboardReportIds.SSP_CSSP,
-    DashboardReportIds.SSP_SSSP,
-    DashboardReportIds.CDSP_CCDSP,
-
-  };
-  final dualBarChartModels = {
-    DashboardReportIds.SSTA_CSSTA,
-    DashboardReportIds.SSTA_SSSTA,
-    DashboardReportIds.SPP_LSPP,
-  };
-
-  final stackedChartModels = {
-    DashboardReportIds.SITO_LSITO,
-  };
-
-  final tableModels = getTableDashboard();
-
-
   parseSSPLSSPDashboard(Rx<DashboardComponentModel> model) async {
     try {
       var result = model.value.response!;
@@ -121,18 +93,7 @@ class DashboardComponentController extends GetxController {
       var rightViews = result["RightViews"];
       var centerViews = result["CenterViews"];
 
-      rightViewsList.value = [];
-      centerViewsList.value = [];
-      switchViewsList.value = [""];
-      for (var view in rightViews) {
-        rightViewsList.value.add(view);
-        switchViewsList.value.add(view);
-
-      }
-      for (var view in centerViews) {
-        centerViewsList.value.add(view);
-        switchViewsList.value.add(view);
-      }
+      switchViewsList.value = [];
 
       var views = result["Views"] as Map<String, dynamic>;
 
@@ -144,10 +105,35 @@ class DashboardComponentController extends GetxController {
         dashboardComponentViewModel.subTitle = value["Subtitle"];
         dashboardComponentViewModel.key = key;
 
-        var header = value["Header"] as Map<String,dynamic>;
+        var header = value["Header"] as Map<String, dynamic>;
         var dataMap = value["Data"] as Map<String, dynamic>;
 
-        if (pieChartModels.contains(model.value.type)) {
+        if (getPieChartModels().contains(model.value.type)) {
+          dataMap.forEach((key, value) {
+            var chartData = [];
+            if (model.value.type == DashboardReportIds.SFAT_CSFAQ) {
+              for (var data in value) {
+                chartData.add([
+                  '${data[header["Column1"]]} (${data[header["Column2"]]})',
+                  //label
+                  data[header["Column3"]],
+                  //value
+                  getRandomColor(),
+                ]);
+              }
+            } else {
+              for (var data in value) {
+                chartData.add([
+                  data[header["Column1"]], //label
+                  data[header["Column2"]], //value
+                  getRandomColor(),
+                ]);
+              }
+            }
+
+            dashboardComponentViewModel.chartData.addIf(true, key, chartData);
+          });
+        } else if (getSingleBarChartModels().contains(model.value.type)) {
           dataMap.forEach((key, value) {
             var chartData = [];
             for (var data in value) {
@@ -159,19 +145,7 @@ class DashboardComponentController extends GetxController {
             }
             dashboardComponentViewModel.chartData.addIf(true, key, chartData);
           });
-        } else if (singleBarChartModels.contains(model.value.type)) {
-          dataMap.forEach((key, value) {
-            var chartData = [];
-            for (var data in value) {
-              chartData.add([
-                data[header["Column1"]], //label
-                data[header["Column2"]], //value
-                getRandomColor(),
-              ]);
-            }
-            dashboardComponentViewModel.chartData.addIf(true, key, chartData);
-          });
-        } else if (dualBarChartModels.contains(model.value.type)) {
+        } else if (getDualBarChartModels().contains(model.value.type)) {
           dataMap.forEach((key, value) {
             var chartData = [];
 //do not change sequence index will lead to crashes
@@ -189,18 +163,52 @@ class DashboardComponentController extends GetxController {
             }
             dashboardComponentViewModel.chartData.addIf(true, key, chartData);
           });
-        }
-        else if(stackedChartModels.contains(model.value.type)){
+        } else if (getStackedChartModels().contains(model.value.type)) {
+          dataMap.forEach((key, value) {
+            var chartData = [];
+
+            if (model.value.type == DashboardReportIds.SITO_LSITO) {
+//do not change sequence index will lead to crashes
+              for (var data in value) {
+                chartData.add([
+                  data[header["Column1"]], //label
+                  data[header["Column2"]], //sell in
+                  data[header["Column3"]], //sell through
+                  data[header["Column4"]], //sell out
+                  data[header["Column5"]], //sell Percentage
+                  header["Column2"],
+                  header["Column3"],
+                  header["Column4"]
+                ]);
+              }
+            } else {
+              for (var data in value) {
+                chartData.add([
+                  data[header["Column1"]] + data[header["Column2"]], //label
+                  data[header["Column3"]], //sell in
+                  data[header["Column4"]], //sell through
+                  data[header["Column5"]], //sell out
+                  data[header["Column6"]], //sell Percentage
+
+                  header["Column3"],
+                  header["Column4"],
+                  header["Column5"]
+                ]);
+              }
+            }
+            dashboardComponentViewModel.chartData.addIf(true, key, chartData);
+          });
+        } else if (getGrowthDeGrowthChartModels().contains(model.value.type)) {
           dataMap.forEach((key, value) {
             var chartData = [];
 //do not change sequence index will lead to crashes
             for (var data in value) {
               chartData.add([
                 data[header["Column1"]], //label
-                data[header["Column2"]], //sell in
-                data[header["Column3"]], //sell through
-                data[header["Column4"]], //sell out
-                data[header["Column5"]], //sell Percentage
+                data[header["Column2"]], //target
+                data[header["Column3"]], //ach value
+                data[header["Column4"]], //achevPerc
+                data[header["Column5"]], //Growth Degrowth
                 // Colors.indigo,
                 // Colors.blueAccent,
               ]);
@@ -209,28 +217,37 @@ class DashboardComponentController extends GetxController {
           });
         }
         //
-        else if(tableModels.contains(model.value.type)){
-          dataMap.forEach((key,value){
+        else if (getTableDashboard().contains(model.value.type)) {
+          dataMap.forEach((key, value) {
             var tableData = [];
-            for(var data in value){
+            for (var data in value) {
               List<dynamic> element = [];
-              header.forEach((key,value){
+              header.forEach((key, value) {
                 element.add(data[value]);
               });
               tableData.add(element);
             }
 
-            dashboardComponentViewModel.tableListData.addIf(true, key, tableData);
+            header.forEach((key, value) {
+              dashboardComponentViewModel.headerList.add(value);
+            });
 
+            dashboardComponentViewModel.tableListData
+                .addIf(true, key, tableData);
           });
-
         }
 
-        dashboardChartModelMap
-            .addIf(true, key, dashboardComponentViewModel);
+        dashboardChartModelMap.addIf(true, key, dashboardComponentViewModel);
+
+        switchViewsList.add(key);
       });
 
-      changeView();
+      //set initial view
+      if (switchViewsList.isNotEmpty) {
+        selectedView.value = switchViewsList[0];
+      }
+
+      changeComponentView();
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -244,39 +261,23 @@ class DashboardComponentController extends GetxController {
     }
   }
 
-  changeView() {
-    String view = "";
-    if (rightViewsList.value.isNotEmpty) {
-      view = getRightView() + getCenterView();
-    }
-
-    if (centerViewsList.value.isNotEmpty) {
-      view = getRightView() + getCenterView();
-    }
-
-    if (view.isNotEmpty) selectedView.value = view;
-
-    if(rightViewsList.isEmpty && centerViewsList.isEmpty){
-      selectedView.value = dashboardChartModelMap.keys.first;
-    }
-
+  changeComponentView() {
     try {
-      if(getTableDashboard().contains(model.value.type)){
-        selectedSubView.value =
-            dashboardChartModelMap[selectedView.value]!.tableListData.keys.first;
-        selectedSubViewList.value =
-            dashboardChartModelMap[selectedView.value]!.tableListData.keys.toList();
-
-        switchViewSelected.value = switchViewsList!.value.first;
-      }else{
+      if (getTableDashboard().contains(model.value.type)) {
+        selectedSubView.value = dashboardChartModelMap[selectedView.value]!
+            .tableListData
+            .keys
+            .first;
+        selectedSubViewList.value = dashboardChartModelMap[selectedView.value]!
+            .tableListData
+            .keys
+            .toList();
+      } else {
         selectedSubView.value =
             dashboardChartModelMap[selectedView.value]!.chartData.keys.first;
         selectedSubViewList.value =
             dashboardChartModelMap[selectedView.value]!.chartData.keys.toList();
-
-        switchViewSelected.value = switchViewsList!.value.first;
       }
-
     } catch (e) {}
 
     selectedSubView.refresh();
@@ -285,18 +286,11 @@ class DashboardComponentController extends GetxController {
     selectedView.refresh();
   }
 
-  changeCenterViews() {
-    if (centerViewsList.value.isNotEmpty) {
-      centerViewSelected = centerViewSelected == 0 ? 1 : 0;
-    }
-    changeView();
-  }
-
-  changeRightViews() {
-    if (rightViewsList.value.isNotEmpty) {
-      rightViewSelected = rightViewSelected == 0 ? 1 : 0;
-    }
-    changeView();
+  changeView(String? value) {
+    value?.let((it) {
+      selectedView.value = value;
+      changeComponentView();
+    });
   }
 
   changeSelectedSubViews(String? value) {
@@ -304,44 +298,6 @@ class DashboardComponentController extends GetxController {
       selectedSubView.value = value;
     });
     selectedSubView.refresh();
-  }
-  changeSwitchSelectedViews(String? value) {
-    value?.let((it) {
-      switchViewSelected.value = value;
-    });
-    switchViewSelected.refresh();
-  }
-
-  String getCenterView() {
-    if (centerViewsList.value.isNotEmpty) {
-      return centerViewsList[centerViewSelected].replaceAll(' ', '');
-    }
-
-    return "";
-  }
-
-  String getRightView() {
-    if (rightViewsList.value.isNotEmpty) {
-      return rightViewsList[rightViewSelected].replaceAll(' ', '');
-    }
-
-    return "";
-  }
-
-  String getCenterViewToDisplay() {
-    if (centerViewsList.value.isNotEmpty) {
-      return 'Switch to ${centerViewsList[centerViewSelected == 0 ? 1 : 0].replaceAll(' ', '')}';
-    }
-
-    return "";
-  }
-
-  String getRightViewToDisplay() {
-    if (rightViewsList.value.isNotEmpty) {
-      return 'Switch to ${rightViewsList[rightViewSelected == 0 ? 1 : 0].replaceAll(' ', '')}';
-    }
-
-    return "";
   }
 
   int colourIndex = 256;
@@ -355,26 +311,24 @@ class DashboardComponentController extends GetxController {
     );
   }
 
-  duplicateComponent() async {
+  duplicateComponent(BuildContext context) async {
     try {
       // presidentMyDashboardController.duplicateComponent(model.value.type,DashboardReportIds.SSTA_TCSSTA);
       presidentMyDashboardController.duplicateComponent(
-          model.value, model.value.type,loadRow);
+          model, model.value.type, loadRow, repaintKey, context);
     } catch (e) {}
     // presidentMyDashboardController.dashComponentsList[model.value.reportWindowId].add()
   }
 
-  tableViewComponent() async{
-    try{
+  tableViewComponent() async {
+    try {
       DashboardReportIds? tableType = getTableId(model.value.type);
 
-      if(tableType != null){
+      if (tableType != null) {
         presidentMyDashboardController.addTableComponent(
-            model.value, tableType,loadRow);
+            model.value, tableType, loadRow);
       }
-    }catch(e){
-
-    }
+    } catch (e) {}
   }
 
   filterComponent(BuildContext context, bool isDark,
@@ -386,6 +340,25 @@ class DashboardComponentController extends GetxController {
     } catch (e) {}
   }
 
+  showFullScreen(BuildContext context, bool isDark) {
+    try {
+      // RenderRepaintBoundary boundary = repaintKey.currentContext!
+      //     .findRenderObject() as RenderRepaintBoundary;
+      // var image = await boundary.toImage(pixelRatio: 3.0);
+
+      presidentMyDashboardController.showFullScreen(context, isDark,presidentMyDashboardController,model,loadRow);
+    } catch (e) {}
+  }
+
+  // showFullScreen() {
+  //   try {
+  //     // RenderRepaintBoundary boundary = repaintKey.currentContext!
+  //     //     .findRenderObject() as RenderRepaintBoundary;
+  //     // var image = await boundary.toImage(pixelRatio: 3.0);
+  //
+  //     presidentMyDashboardController.showFullScreen(presidentMyDashboardController,model,loadRow);
+  //   } catch (e) {}
+  // }
 
   submitComponentLocationFilter(
       RxMap<String, List<FilterDatum>> locationFilterMap) async {
@@ -486,14 +459,12 @@ class DashboardComponentController extends GetxController {
       final response1 = await presidentDashboardRepository
           .generateDescription(jsonEncode(model.value.response));
 
-      if(response1 != null){
+      if (response1 != null) {
         model.value.aiResponse = response1;
       }
 
       aiAnalysisEnabled.value = true;
       aiAnalysisEnabled.refresh();
-
-
     } catch (e) {
       print(e);
     }
@@ -501,19 +472,19 @@ class DashboardComponentController extends GetxController {
 
   final flipComponentEnabled = false.obs;
 
-
   flipComponent() async {
-
     try {
-      if(flipComponentEnabled.value){
+      if (flipComponentEnabled.value) {
         flipComponentEnabled.value = false;
         flipComponentEnabled.refresh();
-      }else{
+      } else {
         var filterDate = 'Selected Filters:';
-        model.value.locationFilterMap.forEach((key,value){
-          filterDate+='\n$key:';
+        model.value.locationFilterMap.forEach((key, value) {
+          filterDate += '\n$key:';
           for (var element in value) {
-            if(element.isSelected == 1 || model.value.locationFilterUID.isEmpty) filterDate+='\n${element.name},';
+            if (element.isSelected == 1 ||
+                model.value.locationFilterUID.isEmpty)
+              filterDate += '\n${element.name},';
           }
         });
 
@@ -522,10 +493,6 @@ class DashboardComponentController extends GetxController {
         flipComponentEnabled.value = true;
         flipComponentEnabled.refresh();
       }
-
-
-
-
     } catch (e) {
       print(e);
     }

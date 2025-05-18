@@ -37,7 +37,6 @@ class DualColumnCharts extends StatelessWidget {
               name: (chartData != null && chartData!.isNotEmpty)
                   ? chartData![0][4]
                   : "",
-
               dataSource: chartData,
               xValueMapper: (data, _) => data[0],
               yValueMapper: (data, _) => data[1],

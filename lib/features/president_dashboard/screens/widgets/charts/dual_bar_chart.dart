@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 void main() {
@@ -15,6 +17,40 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+class Test extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+
+    showFull(){
+      Get.bottomSheet(
+          // ignoreSafeArea: true,
+          // barrierColor: Colors.transparent.withValues(alpha: 0.3),
+          // shape: const RoundedRectangleBorder(
+          //   borderRadius: BorderRadius.only(
+          //     topLeft: Radius.circular(CSizes.borderRadiusXLg),
+          //     topRight: Radius.circular(CSizes.borderRadiusXLg),
+          //     bottomLeft: Radius.zero,
+          //     bottomRight: Radius.zero,
+          //   ),
+          // ),
+          isScrollControlled: true,
+          // Allow full height
+
+          // backgroundColor:
+          // isDark ? CColors.darkContainer : CColors.lightContainer,
+          Container(
+            child: Text("sai"),
+          ));
+    }
+
+    return Container(
+      child: IconButton(onPressed: showFull(), icon: Icon(Icons.fullscreen,color: Colors.green,size: 45,)),
+    );
+  }
+
 }
 
 class ChartData {

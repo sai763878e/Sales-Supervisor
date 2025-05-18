@@ -7,5 +7,6 @@ class DashboardComponentViewModel {
   Map<String, List> chartData = {};
   String key = "";
 
-  Map<String,List> tableListData = {};
+  Map<String, List> tableListData = {};
+  List<dynamic> headerList = [];
 }

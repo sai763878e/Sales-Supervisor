@@ -37,7 +37,7 @@ class StackedColumnCharts extends StatelessWidget {
               yValueMapper: ( data, _) => data[1],
               dataLabelMapper: (data, _) => '${data[1]}',
 
-              name: 'Sell In',
+              name: chartData?[0][5],
               color: Colors.blue,
             ),
             StackedColumnSeries(
@@ -46,7 +46,7 @@ class StackedColumnCharts extends StatelessWidget {
               yValueMapper: (data, _) => data[2],
               dataLabelMapper: (data, _) => '${data[2]}',
 
-              name: 'Sell Through',
+              name: chartData?[0][6],
               color: Colors.orange,
             ),
             StackedColumnSeries(
@@ -55,7 +55,7 @@ class StackedColumnCharts extends StatelessWidget {
               yValueMapper: (data, _) => data[3],
               dataLabelMapper: (data, _) => '${data[3]}',
 
-              name: 'Sell Out',
+              name: chartData?[0][7],
               color: Colors.green,
             ),
 

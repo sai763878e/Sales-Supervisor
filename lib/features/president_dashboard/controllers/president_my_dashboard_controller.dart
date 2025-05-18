@@ -8,6 +8,7 @@ import 'package:sales_supervisor/features/president_dashboard/controllers/dashbo
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_component_model.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/dashboard_report_ids.dart';
 import 'package:sales_supervisor/features/president_dashboard/models/location_filter_model.dart';
+import 'package:sales_supervisor/features/president_dashboard/screens/widgets/dashboard_components/dashboard_component.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:uuid/uuid.dart';
 
@@ -45,12 +46,32 @@ class PresidentMyDashboardController extends GetxController {
   final load_SSP_CSSP = false.obs;
   final load_SSP_SSSP = false.obs;
 
+  final load_SSTA_LSSTA = false.obs;
   final load_SSTA_CSSTA = false.obs;
   final load_SSTA_SSSTA = false.obs;
   final load_SPP_LSPP = false.obs;
   final load_SITO_LSITO = false.obs;
   final load_CDSP_CCDSP = false.obs;
+
   final load_ISDP_VISDP = false.obs;
+  final load_ISDP_LISDP = false.obs;
+  final load_ISDP_CISDP = false.obs;
+  final load_ISDP_SISDP = false.obs;
+
+  final load_ITAG_LITAG = false.obs;
+  final load_ITAG_CMCITAG = false.obs;
+  final load_ITAG_L1MCITAG = false.obs;
+  final load_ITAG_L2MCITAG = false.obs;
+
+  final load_ZSIC_LZSIC = false.obs;
+
+  final load_AROD_LAROD = false.obs;
+
+  final load_AODP_LAODP = false.obs;
+  final load_ARTA_LARTA = false.obs;
+  final load_SFAT_CSFAQ = false.obs;
+  final load_SOAT_LSOAT = false.obs;
+  final load_PHOD_LPHOD = false.obs;
 
   @override
   Future<void> onInit() async {
@@ -135,8 +156,8 @@ class PresidentMyDashboardController extends GetxController {
           dashComponentsList.forEach((key, value) {
             for (var ele in value) {
               // ele.value.locationFilterMap = locationFilterMap;
-              ele.value.locationFilterMap = cloneLocationFilterMap(locationFilterMap);
-
+              ele.value.locationFilterMap =
+                  cloneLocationFilterMap(locationFilterMap);
             }
           });
         }
@@ -157,7 +178,8 @@ class PresidentMyDashboardController extends GetxController {
     }
   }
 
-  submitLocationFilter(RxMap<String, List<FilterDatum>> locationFilterMapOne) async {
+  submitLocationFilter(
+      RxMap<String, List<FilterDatum>> locationFilterMapOne) async {
     try {
       isPageLoading.value = true;
       isPageLoading.refresh();
@@ -184,13 +206,12 @@ class PresidentMyDashboardController extends GetxController {
             for (var ele in value) {
               ele.value.isLoading = true;
               ele.value.locationFilterUID = locationFilterUID;
-              ele.value.locationFilterMap = cloneLocationFilterMap(locationFilterMapOne);
-
+              ele.value.locationFilterMap =
+                  cloneLocationFilterMap(locationFilterMapOne);
             }
           }
         });
       });
-
     } catch (e) {
     } finally {
       isPageLoading.value = false;
@@ -198,28 +219,35 @@ class PresidentMyDashboardController extends GetxController {
     }
   }
 
-  RxMap<String, List<FilterDatum>> cloneLocationFilterMap(RxMap<String, List<FilterDatum>> original) {
+  RxMap<String, List<FilterDatum>> cloneLocationFilterMap(
+      RxMap<String, List<FilterDatum>> original) {
     // Create a new map and clone the values inside it
     var clonedMap = <String, List<FilterDatum>>{}.obs;
 
     original.forEach((key, valueList) {
       // Clone each list and its contents (deep copy)
-      clonedMap[key] = valueList.map((filterDatum) => filterDatum.clone()).toList();
+      clonedMap[key] =
+          valueList.map((filterDatum) => filterDatum.clone()).toList();
     });
 
     return clonedMap;
   }
 
-  submitComponentLocationFilter(RxMap<String, List<FilterDatum>> locationFilterMapOne, DashboardComponentController? controller) async {
+  submitComponentLocationFilter(
+      RxMap<String, List<FilterDatum>> locationFilterMapOne,
+      DashboardComponentController? controller) async {
     try {
       controller?.submitComponentLocationFilter(locationFilterMapOne);
     } catch (e) {
-    } finally {
-    }
+    } finally {}
   }
 
-
-  showLocationFilterSheet(BuildContext context, bool isDark, RxMap<String, List<FilterDatum>> locationFilterMapOne,bool isGlobalFilter, DashboardComponentController? controller) {
+  showLocationFilterSheet(
+      BuildContext context,
+      bool isDark,
+      RxMap<String, List<FilterDatum>> locationFilterMapOne,
+      bool isGlobalFilter,
+      DashboardComponentController? controller) {
     Get.bottomSheet(
         ignoreSafeArea: true,
         barrierColor: Colors.transparent.withValues(alpha: 0.3),
@@ -234,8 +262,7 @@ class PresidentMyDashboardController extends GetxController {
         isScrollControlled: true,
         // Allow full height
 
-        backgroundColor:
-            isDark ? CColors.darkContainer : CColors.lightContainer,
+        backgroundColor: isDark ? CColors.darkContainer : CColors.white,
         Container(
           height: CHelperFunction.screenHeight() * 0.8,
           width: double.infinity,
@@ -255,7 +282,7 @@ class PresidentMyDashboardController extends GetxController {
                     flex: 2,
                     child: Container(
                       height: double.infinity,
-                      color: Colors.grey.shade300,
+                      color: Colors.grey.shade100,
                       child: Obx(
                         () => ListView.builder(
                             itemCount: locationTypesList.length,
@@ -278,9 +305,9 @@ class PresidentMyDashboardController extends GetxController {
                                 child: Container(
                                   color: locationType.isSelected
                                       ? CColors.white
-                                      : Colors.grey.shade300,
+                                      : Colors.grey.shade100,
                                   child: Padding(
-                                      padding: EdgeInsets.all(CSizes.xmd),
+                                      padding: EdgeInsets.all(18),
                                       child:
                                           Text(locationTypesList[index].type)),
                                 ),
@@ -293,7 +320,7 @@ class PresidentMyDashboardController extends GetxController {
                       flex: 3,
                       child: Container(
                         height: double.infinity,
-                        color: Colors.grey.shade300,
+                        color: CColors.white,
                         child: Obx(
                           () => ListView.builder(
                               itemCount: locationFilterMapOne[
@@ -354,10 +381,11 @@ class PresidentMyDashboardController extends GetxController {
                         ),
                         onPressed: () {
                           Get.back();
-                          if(isGlobalFilter){
+                          if (isGlobalFilter) {
                             submitLocationFilter(locationFilterMapOne);
-                          }else{
-                            submitComponentLocationFilter(locationFilterMapOne,controller);
+                          } else {
+                            submitComponentLocationFilter(
+                                locationFilterMapOne, controller);
                           }
                         },
                         child: Text(
@@ -375,9 +403,75 @@ class PresidentMyDashboardController extends GetxController {
         ));
   }
 
+  showFullScreen(
+      BuildContext context,
+      bool isDark,
+      PresidentMyDashboardController presidentMyDashboardController,
+      Rx<DashboardComponentModel> model,
+      Rx<bool> loadRow) {
+    Rx<DashboardComponentModel> dashboardComponentModel =
+        DashboardComponentModel(
+      type: model.value.type,
+    ).obs;
+
+    dashboardComponentModel.value.reportId =
+        model.value.type.name.split("_")[0];
+    dashboardComponentModel.value.reportWindowId =
+        model.value.type.name.split("_")[1];
+    // dashboardComponentModel.value.isLoading = true;
+    dashboardComponentModel.value.response = model.value.response;
+    dashboardComponentModel.value.uuid = Uuid().v1();
+
+    dashboardComponentModel.value.userId = model.value.userId;
+    dashboardComponentModel.value.userTypeId = model.value.userTypeId;
+    dashboardComponentModel.value.filterOptionBase =
+        model.value.filterOptionBase;
+    dashboardComponentModel.value.filterOptionMonth =
+        model.value.filterOptionMonth;
+    dashboardComponentModel.value.filterOptionYear =
+        model.value.filterOptionYear;
+    dashboardComponentModel.value.locationFilterUID =
+        model.value.locationFilterUID;
+    dashboardComponentModel.value.locationFilterMap =
+        cloneLocationFilterMap(model.value.locationFilterMap);
+
+    dashboardComponentModel.value.doSmoothScroll = true;
+    dashboardComponentModel.value.isFullScreen = true;
+
+
+
+    Get.bottomSheet(
+            ignoreSafeArea: true,
+            barrierColor: Colors.transparent.withValues(alpha: 0.3),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(CSizes.borderRadiusXLg),
+                topRight: Radius.circular(CSizes.borderRadiusXLg),
+                bottomLeft: Radius.zero,
+                bottomRight: Radius.zero,
+              ),
+            ),
+            isScrollControlled: true,
+            // Allow full height
+
+            backgroundColor:
+                isDark ? CColors.darkContainer : CColors.lightContainer,
+            DashboardComponent(
+                presidentMyDashboardController: presidentMyDashboardController,
+                componentModel: dashboardComponentModel,
+                loadRow: loadRow,height: CHelperFunction.screenHeight(),))
+        .then((result) {
+      dashboardComponentModel.value.isFullScreen=false;
+    });
+  }
+
   duplicateComponent(
-      DashboardComponentModel model, DashboardReportIds type, Rx<bool> loadRow) async {
-    var dashboardList = dashComponentsList[model.type]!;
+      Rx<DashboardComponentModel> model,
+      DashboardReportIds type,
+      Rx<bool> loadRow,
+      GlobalKey<State<StatefulWidget>> repaintKey,
+      BuildContext context) async {
+    var dashboardList = dashComponentsList[model.value.type]!;
     Rx<DashboardComponentModel> dashboardComponentModel =
         DashboardComponentModel(
       type: type,
@@ -386,19 +480,26 @@ class PresidentMyDashboardController extends GetxController {
     dashboardComponentModel.value.reportId = type.name.split("_")[0];
     dashboardComponentModel.value.reportWindowId = type.name.split("_")[1];
     dashboardComponentModel.value.isLoading = true;
-    dashboardComponentModel.value.response = model.response;
-    dashboardComponentModel.value.isDuplicate = true;
+    dashboardComponentModel.value.response = model.value.response;
     dashboardComponentModel.value.uuid = Uuid().v1();
 
-    dashboardComponentModel.value.userId = model.userId;
-    dashboardComponentModel.value.userTypeId = model.userTypeId;
-    dashboardComponentModel.value.filterOptionBase = model.filterOptionBase;
-    dashboardComponentModel.value.filterOptionMonth = model.filterOptionMonth;
-    dashboardComponentModel.value.filterOptionYear = model.filterOptionYear;
-    dashboardComponentModel.value.locationFilterUID = model.locationFilterUID;
-    dashboardComponentModel.value.locationFilterMap = cloneLocationFilterMap(model.locationFilterMap);
+    dashboardComponentModel.value.userId = model.value.userId;
+    dashboardComponentModel.value.userTypeId = model.value.userTypeId;
+    dashboardComponentModel.value.filterOptionBase =
+        model.value.filterOptionBase;
+    dashboardComponentModel.value.filterOptionMonth =
+        model.value.filterOptionMonth;
+    dashboardComponentModel.value.filterOptionYear =
+        model.value.filterOptionYear;
+    dashboardComponentModel.value.locationFilterUID =
+        model.value.locationFilterUID;
+    dashboardComponentModel.value.locationFilterMap =
+        cloneLocationFilterMap(model.value.locationFilterMap);
 
-    dashboardList.add(dashboardComponentModel);
+    dashboardComponentModel.value.doSmoothScroll = true;
+
+    dashboardList.insert(
+        dashboardList.indexOf(model) + 1, dashboardComponentModel);
 
     // dashComponentsList.assign(type, dashboardComponentModel);
     dashComponentsList.addIf(true, type, dashboardList);
@@ -406,9 +507,13 @@ class PresidentMyDashboardController extends GetxController {
     // dashComponentsList.refresh();
     loadRow.refresh();
 
+    // scrollToTarget(dashboardList.indexOf(model), CHelperFunction.screenWidth() * 0.85);
+
+    // _scrollToTarget(repaintKey,context);
   }
-  addTableComponent(
-      DashboardComponentModel model, DashboardReportIds type, Rx<bool> loadRow) async {
+
+  addTableComponent(DashboardComponentModel model, DashboardReportIds type,
+      Rx<bool> loadRow) async {
     var dashboardList = dashComponentsList[model.type]!;
     Rx<DashboardComponentModel> dashboardComponentModel =
         DashboardComponentModel(
@@ -428,7 +533,10 @@ class PresidentMyDashboardController extends GetxController {
     dashboardComponentModel.value.filterOptionMonth = model.filterOptionMonth;
     dashboardComponentModel.value.filterOptionYear = model.filterOptionYear;
     dashboardComponentModel.value.locationFilterUID = model.locationFilterUID;
-    dashboardComponentModel.value.locationFilterMap = cloneLocationFilterMap(model.locationFilterMap);
+    dashboardComponentModel.value.locationFilterMap =
+        cloneLocationFilterMap(model.locationFilterMap);
+
+    dashboardComponentModel.value.doSmoothScroll = true;
 
     dashboardList.add(dashboardComponentModel);
 
@@ -437,6 +545,37 @@ class PresidentMyDashboardController extends GetxController {
 
     // dashComponentsList.refresh();
     loadRow.refresh();
-
   }
+
+  final ScrollController scrollController = ScrollController();
+
+  void scrollToTarget(int targetIndex, double itemWidth) {
+    // int targetIndex = dashComponentsList.value.indexOf(model);
+    final double offset = targetIndex * itemWidth;
+
+    scrollController.animateTo(
+      offset,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+// void scrollToTarget(GlobalKey targetKey, BuildContext context) {
+//   // Delay needed to ensure layout is built
+//   WidgetsBinding.instance.addPostFrameCallback((_) {
+//     RenderBox? renderBox =
+//         targetKey.currentContext?.findRenderObject() as RenderBox?;
+//     if (renderBox != null) {
+//       double position = renderBox
+//           .localToGlobal(Offset.zero, ancestor: context.findRenderObject())
+//           .dx;
+//       double currentScroll = scrollController.offset;
+//
+//       scrollController.animateTo(
+//         currentScroll + position,
+//         duration: Duration(milliseconds: 500),
+//         curve: Curves.easeInOut,
+//       );
+//     }
+//   });
+// }
 }
